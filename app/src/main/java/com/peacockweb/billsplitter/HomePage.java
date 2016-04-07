@@ -1,5 +1,7 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,8 +14,7 @@ import android.widget.ListView;
 
 public class HomePage extends AppCompatActivity {
 
-    String[] myStringArray = {"Box 1", "Box 2", "Box 3", "Box 4", "Box 5", "Box 6", "Box 7",
-            "Box 8", "Box 9", "Box 10", "Box 11", "Box 12", "Box 13", "Box 14"};
+    String[] myStringArray = {"Expense 1", "Expense 2", "Expense 3", "Expense 4", "Expense 5", "Expense 6"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +31,16 @@ public class HomePage extends AppCompatActivity {
 
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            // Do something in response to the click
+            Snackbar.make(findViewById(R.id.main_bill_list), "This will show details for the expense and allow the user to pay debts.", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null)
+                    .show();
         }
     };
+
+    public void addBill(View view) {
+        Intent intent = new Intent(this, AddBill.class);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,8 +56,16 @@ public class HomePage extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        if (id == R.id.friends)
+        {
+            Intent intent = new Intent(getApplicationContext(), Friends.class);
+            startActivity(intent);
+        }
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+/*            Intent intent = new Intent(this, Settings.class);
+            startActivity(intent);*/
             return true;
         }
 

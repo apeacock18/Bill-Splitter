@@ -33,7 +33,10 @@
             android:layout_height="75dp"
             android:layout_gravity="bottom|right"
             android:clickable="true"
-            android:src="@drawable/ic_action_name2" />
+            android:src="@drawable/ic_action_name2"
+            android:onClick="addBill"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp" />
 
     </FrameLayout>
 

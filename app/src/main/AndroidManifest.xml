@@ -19,6 +19,32 @@
         <activity
             android:name=".AddBill"
             android:label="@string/title_activity_add_bill" >
+            android:parentActivityName="com.peacockweb.billsplitter.HomePage" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.peacockweb.billsplitter.HomePage" />
+        </activity>
+        <activity
+            android:name=".Friends"
+            android:label="@string/title_activity_friends"
+            android:parentActivityName=".HomePage" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.peacockweb.billsplitter.HomePage" />
+        </activity>
+        <activity
+            android:name=".Settings"
+            android:label="@string/title_activity_settings" >
+            android:parentActivityName=".HomePage" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.peacockweb.billsplitter.HomePage" />
         </activity>
     </application>
 
