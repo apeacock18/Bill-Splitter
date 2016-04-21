@@ -12,6 +12,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.parse.Parse;
+
 public class HomePage extends AppCompatActivity {
 
     String[] myStringArray = {"Expense 1", "Expense 2", "Expense 3", "Expense 4", "Expense 5", "Expense 6"};
