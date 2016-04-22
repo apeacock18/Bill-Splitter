@@ -56,10 +56,10 @@ public class SignUp extends AppCompatActivity {
         EditText phone = (EditText) findViewById(R.id.SUphone);
 
         ParseUser user = new ParseUser();
-        //user.setUsername(fullName.getText().toString());
-        //user.setPassword(password.getText().toString());
-        //user.setEmail(email.getText().toString());
-        //user.put("phone", phone.getText().toString());
+        user.setUsername(fullName.getText().toString());
+        user.setPassword(password.getText().toString());
+        user.setEmail(email.getText().toString());
+        user.put("phone", Integer.parseInt(phone.getText().toString()));
 
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {

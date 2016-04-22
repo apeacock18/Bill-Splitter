@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 public class HeaderPage extends AppCompatActivity {
 
@@ -17,11 +18,15 @@ public class HeaderPage extends AppCompatActivity {
         setContentView(R.layout.activity_header_page);
         Parse.initialize(new Parse.Configuration.Builder(getApplication().getApplicationContext())
                         .applicationId("1b38359d-f9ba-49b5-8c31-342d9be92f2e")
-                        .clientKey(" ")
-                        .server("https://billsplitter375.azurewebsites.net/parseServer/") // The trailing slash is important.
-
+                        .server("https://billsplitter375.azurewebsites.net/parse/") // The trailing slash is important.
                         .build()
         );
+
+        ParseObject test = new ParseObject("Test");
+        test.put("foo", "bar");
+        test.saveInBackground();
+
+        System.out.println(test.getString("foo"));
     }
 
     @Override

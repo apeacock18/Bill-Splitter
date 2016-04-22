@@ -1,14 +1,22 @@
 package com.peacockweb.billsplitter;
 
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.util.List;
 
 public class ParseServerTest extends AppCompatActivity {
 
@@ -47,5 +55,22 @@ public class ParseServerTest extends AppCompatActivity {
 
         //obj.put("description", ((EditText) (findViewById(R.id.transactionDescrip))).getText().toString());
         obj.saveInBackground();
+    }
+
+    public void updateClick(View view) {
+        final TextView text = (TextView) findViewById(R.id.updateText);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("BillMember");
+        query.whereEqualTo("memberName", "Chris");
+        query.getFirstInBackground(new GetCallback<ParseObject>() {
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    int i = object.getInt("amountPaid");
+                    String s = String.valueOf(i);
+                    text.setText(s);
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }
