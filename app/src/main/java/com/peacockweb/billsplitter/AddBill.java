@@ -6,11 +6,27 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListPopupWindow;
 
-public class AddBill extends AppCompatActivity {
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.peacockweb.billsplitter.util.PopupListWindow;
+
+import java.util.List;
+
+public class AddBill extends AppCompatActivity
+implements AdapterView.OnItemClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +44,71 @@ public class AddBill extends AppCompatActivity {
         });*/
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        usernameText = (EditText) findViewById(
+                R.id.billAddPersonText);
+
+        listPopupWindow = new ListPopupWindow(
+                AddBill.this);
+        listPopupWindow.setAdapter(
+                new ArrayAdapter(AddBill.this,
+                        R.layout.list_item, products));
+
+        listPopupWindow.setAnchorView(usernameText);
+        listPopupWindow.setWidth(300);
+        listPopupWindow.setHeight(400);
+
+        listPopupWindow.setModal(true);
+        listPopupWindow.setOnItemClickListener(
+                AddBill.this);
+
+        usernameText.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                listPopupWindow.show();
+            }
+        });
+
+        EditText etValue = (EditText) findViewById(R.id.billAddPersonText);
+        etValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // Fires right as the text is being changed (even supplies the range of text)
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Fires right before text is changing
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Fires right after the text has changed
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                query.whereEqualTo("username", s.toString());
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> names, ParseException e) {
+                        if (e == null) {
+                            Log.d("usernames", names.size() + " found in database!");
+                        } else {
+                            Log.d("usernames", "Error: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    String[] products={"Camera", "Laptop", "Watch","Smartphone",
+            "Television"};
+    EditText usernameText;
+    ListPopupWindow listPopupWindow;
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view,
+                            int position, long id) {
+        usernameText.setText(products[position]);
+        listPopupWindow.dismiss();
     }
 
     @Override

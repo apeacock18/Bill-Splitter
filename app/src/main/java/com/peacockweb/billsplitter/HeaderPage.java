@@ -16,9 +16,9 @@ public class HeaderPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_header_page);
         Parse.initialize(new Parse.Configuration.Builder(getApplication().getApplicationContext())
-                        .applicationId("1b38359d-f9ba-49b5-8c31-342d9be92f2e")
-                        .clientKey(" ")
-                        .server("https://billsplitter375.azurewebsites.net/parseServer/") // The trailing slash is important.
+                        .applicationId("SmKujk7VXA7gQcUNz6hHjbPWpk1jF0Wtp1RPZ71Z")
+                        .clientKey("g1gsXIi0t2Hk1maTsl5lXGbEaqLMlIQE8MludaDW")
+                        .server("https://parseapi.back4app.com/") // The trailing slash is important.
 
                         .build()
         );
@@ -57,7 +57,7 @@ public class HeaderPage extends AppCompatActivity {
     }
 
     public void testClick(View view) {
-        Intent intent = new Intent(this, ParseServerTest.class);
+        Intent intent = new Intent(this, HomePage.class);
         startActivity(intent);
     }
 }

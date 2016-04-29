@@ -42,4 +42,30 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
     </android.support.design.widget.CoordinatorLayout>
 
+    <FrameLayout
+        android:id="@+id/fab_rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/new_bill"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="bottom|right"
+            android:clickable="true"
+            android:src="@drawable/ic_action_name2"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/new_friend"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_gravity="bottom|right"
+            android:clickable="true"
+            android:src="@drawable/add_person"
+            android:layout_marginBottom="105dp"
+            android:layout_marginRight="10dp" />
+
+    </FrameLayout>
 </RelativeLayout>

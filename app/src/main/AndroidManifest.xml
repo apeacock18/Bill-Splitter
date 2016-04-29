@@ -80,6 +80,10 @@
             android:name=".ParseServerTest"
             android:label="@string/title_activity_parse_server_test" >
         </activity>
+        <activity
+            android:name=".util.PopupListWindow"
+            android:label="@string/title_activity_popup_list_window" >
+        </activity>
     </application>
 
 </manifest>

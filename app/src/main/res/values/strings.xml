@@ -15,4 +15,5 @@
     <string name="title_activity_sign_in">SignIn</string>
     <string name="title_activity_sign_up">SignUp</string>
     <string name="title_activity_parse_server_test">ParseServerTest</string>
+    <string name="title_activity_popup_list_window">PopupListWindow</string>
 </resources>
