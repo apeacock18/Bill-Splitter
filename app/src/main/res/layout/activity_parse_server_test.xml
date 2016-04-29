@@ -61,4 +61,21 @@
         android:layout_centerHorizontal="true"
         android:onClick="submitClick" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update"
+        android:id="@+id/update"
+        android:layout_below="@+id/submitTransaction"
+        android:layout_centerHorizontal="true"
+        android:onClick="updateClick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text goes here"
+        android:id="@+id/updateText"
+        android:layout_below="@+id/update"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
