@@ -23,10 +23,17 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.peacockweb.billsplitter.util.PopupListWindow;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AddBill extends AppCompatActivity
 implements AdapterView.OnItemClickListener {
+
+    ArrayList namesList;
+    EditText usernameText;
+    ListPopupWindow listPopupWindow;
+    ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,30 +52,32 @@ implements AdapterView.OnItemClickListener {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        usernameText = (EditText) findViewById(
-                R.id.billAddPersonText);
+/*        usernameText = (EditText) findViewById(
+                R.id.billAddPersonText);*/
 
         listPopupWindow = new ListPopupWindow(
                 AddBill.this);
-        listPopupWindow.setAdapter(
-                new ArrayAdapter(AddBill.this,
-                        R.layout.list_item, products));
+
+        namesList = new ArrayList();
+
+        adapter = new ArrayAdapter(AddBill.this, R.layout.list_item, namesList);
+        listPopupWindow.setAdapter(adapter);
 
         listPopupWindow.setAnchorView(usernameText);
-        listPopupWindow.setWidth(300);
-        listPopupWindow.setHeight(400);
+        listPopupWindow.setWidth(200);
+        listPopupWindow.setHeight(300);
 
         listPopupWindow.setModal(true);
         listPopupWindow.setOnItemClickListener(
                 AddBill.this);
 
-        usernameText.setOnClickListener(new View.OnClickListener() {
+/*        usernameText.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 listPopupWindow.show();
             }
-        });
+        });*/
 
-        EditText etValue = (EditText) findViewById(R.id.billAddPersonText);
+        EditText etValue = (EditText) findViewById(R.id.SIpassword);
         etValue.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -89,7 +98,16 @@ implements AdapterView.OnItemClickListener {
                 query.findInBackground(new FindCallback<ParseObject>() {
                     public void done(List<ParseObject> names, ParseException e) {
                         if (e == null) {
-                            Log.d("usernames", names.size() + " found in database!");
+                            if (!names.isEmpty()) {
+                                Log.d("usernames", names.size() + " found in database!");
+                                adapter.clear();
+                                for (ParseObject obj : names) {
+                                    adapter.add(obj.getString("username"));
+                                }
+                                listPopupWindow.show();
+                            /*String[] parseNames = names.toArray(new String[names.size()]);
+                            adapter.addAll(Arrays.copyOf(parseNames, parseNames.length, String[].class));*/
+                            }
                         } else {
                             Log.d("usernames", "Error: " + e.getMessage());
                         }
@@ -99,15 +117,10 @@ implements AdapterView.OnItemClickListener {
         });
     }
 
-    String[] products={"Camera", "Laptop", "Watch","Smartphone",
-            "Television"};
-    EditText usernameText;
-    ListPopupWindow listPopupWindow;
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view,
                             int position, long id) {
-        usernameText.setText(products[position]);
+        usernameText.setText((String) namesList.get(position));
         listPopupWindow.dismiss();
     }
 
@@ -129,7 +142,7 @@ implements AdapterView.OnItemClickListener {
         {
 /*            Intent intent = new Intent(getApplicationContext(), HomePage.class);
             startActivity(intent);*/
-            Snackbar.make(findViewById(R.id.editText), "Successfully created bill!", Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.editText10), "Successfully created bill!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show();
         }

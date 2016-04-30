@@ -4,13 +4,22 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
+import com.parse.FunctionCallback;
 import com.parse.LogInCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseUser;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 
 public class SignIn extends AppCompatActivity {
 
@@ -49,17 +58,44 @@ public class SignIn extends AppCompatActivity {
 
     public void SIdoneClick(View view) {
 
-        ParseUser.logInInBackground("jeff", "password", new LogInCallback() {
-            public void done(ParseUser user, ParseException e) {
-                if (user != null) {
+        EditText username = (EditText) findViewById(R.id.SIemail);
+        EditText password = (EditText) findViewById(R.id.SIpassword);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("username", username.getText().toString());
+        params.put("password", get_SHA_512_SecurePassword(password.getText().toString(), ""));
+        ParseCloud.callFunctionInBackground("login", params, new FunctionCallback<String>() {
+            public void done(String id, ParseException e) {
+                if (e == null) {
+                    System.out.println(id);
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                    finish();
                     startActivity(intent);
                 } else {
-                    Snackbar.make(findViewById(R.id.SIdone), e.getMessage(), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .show();
+                    e.printStackTrace();
                 }
             }
         });
+    }
+
+    public String get_SHA_512_SecurePassword(String passwordToHash, String salt)
+    {
+        String generatedPassword = null;
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] bytes = md.digest(passwordToHash.concat(salt).getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedPassword;
     }
 }

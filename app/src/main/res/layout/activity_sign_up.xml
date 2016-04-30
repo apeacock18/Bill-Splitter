@@ -35,13 +35,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/SUemail"
-        android:layout_below="@+id/SUfullName"
+        android:hint="Your email address"
+        android:layout_below="@+id/usernameText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="Your email address"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="30px" />
+        android:layout_marginTop="15dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="30px" />
+        android:layout_marginTop="15dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -63,47 +63,28 @@
         android:inputType="phone"
         android:ems="10"
         android:id="@+id/SUphone"
+        android:hint="Your phone number"
         android:layout_below="@+id/SUpassword"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="30px"
-        android:hint="Your phone number"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Currency type"
-        android:id="@+id/currencyStaticText"
-        android:layout_below="@+id/SUphone"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30px" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/SUcurrencyType"
-        android:text="USD"
-        android:layout_below="@+id/SUphone"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Back"
         android:id="@+id/signUpBackBtn"
-        android:layout_below="@+id/SUcurrencyType"
-        android:layout_toLeftOf="@+id/SUcurrencyType"
         android:layout_marginTop="67dp"
         android:layout_marginRight="20px"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="20px"
         android:onClick="signUpBack"
-        android:nestedScrollingEnabled="true" />
+        android:nestedScrollingEnabled="true"
+        android:layout_below="@+id/SUphone"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -113,8 +94,19 @@
         android:layout_alignBottom="@+id/signUpBackBtn"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_toRightOf="@+id/SUcurrencyType"
-        android:layout_toEndOf="@+id/SUcurrencyType"
         android:layout_marginRight="20px"
-        android:onClick="signUpDone" />
+        android:onClick="signUpDone"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/usernameText"
+        android:layout_below="@+id/SUfullName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:hint="Your username"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp" />
 </RelativeLayout>

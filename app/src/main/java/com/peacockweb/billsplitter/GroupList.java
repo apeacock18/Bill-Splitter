@@ -13,10 +13,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 public class GroupList extends Fragment {
 
-    String[] myStringArray = {"Group 1", "Group 2", "Group 3"};
+    ArrayList<String> myStringArray = new ArrayList(Arrays.asList("9FFiV68XRZ", "Q9wlGb33uH"));
     private View view;
 
     public GroupList() {}
@@ -30,7 +34,7 @@ public class GroupList extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getBaseContext(),
                 android.R.layout.simple_list_item_1, myStringArray);
         ListView listView1 = (ListView) view.findViewById(R.id.listView2);
         listView1.setAdapter(adapter);

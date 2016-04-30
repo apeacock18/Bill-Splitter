@@ -58,7 +58,7 @@ public class Friends extends AppCompatActivity {
         {
 /*            Intent intent = new Intent(getApplicationContext(), HomePage.class);
             startActivity(intent);*/
-            Snackbar.make(findViewById(R.id.editText), "Successfully created bill!", Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.editText10), "Successfully created bill!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show();
         }

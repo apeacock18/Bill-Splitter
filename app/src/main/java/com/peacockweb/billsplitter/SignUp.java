@@ -9,10 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.parse.FunctionCallback;
 import com.parse.Parse;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
+
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 
 public class SignUp extends AppCompatActivity {
 
@@ -54,27 +62,63 @@ public class SignUp extends AppCompatActivity {
         EditText password = (EditText) findViewById(R.id.SUpassword);
         EditText email = (EditText) findViewById(R.id.SUemail);
         EditText phone = (EditText) findViewById(R.id.SUphone);
+        EditText username = (EditText) findViewById((R.id.usernameText));
 
-        ParseUser user = new ParseUser();
-        user.setUsername(fullName.getText().toString());
-        user.setPassword(password.getText().toString());
-        user.setEmail(email.getText().toString());
-        user.put("phone", phone.getText().toString());
+        ParseObject user = new ParseObject("Users");
 
-        user.signUpInBackground(new SignUpCallback() {
-            public void done(ParseException e) {
+        String str = fullName.getText().toString();
+        String[] splited = str.split("\\s+");
+/*        user.put("fName", splited[0]);
+        user.put("lName", splited[1]);
+        user.put("username", username.getText().toString());
+        user.put("email", email.getText().toString());
+        user.put("password", get_SHA_512_SecurePassword(password.toString(), ""));
+        user.put("phoneNumber", phone.getText().toString());*/
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("fName", splited[0]);
+        params.put("lName", splited[1]);
+        params.put("email", email.getText().toString());
+        params.put("phoneNumber", phone.getText().toString());
+        params.put("username", username.getText().toString());
+        params.put("password", get_SHA_512_SecurePassword(password.getText().toString(), ""));
+        ParseCloud.callFunctionInBackground("create", params, new FunctionCallback<String>() {
+            public void done(String id, ParseException e) {
                 if (e == null) {
-
+                    System.out.println(id);
+                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                    finish();
+                    startActivity(intent);
                 } else {
                     e.printStackTrace();
-                    Snackbar.make(findViewById(R.id.SUfullName), e.getMessage(), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null)
-                            .show();
                 }
             }
         });
 
+        user.saveInBackground();
+
         Intent intent = new Intent(getApplicationContext(), HomePage.class);
         startActivity(intent);
+    }
+
+    public String get_SHA_512_SecurePassword(String passwordToHash, String salt)
+    {
+        String generatedPassword = null;
+        try {
+
+            MessageDigest md = MessageDigest.getInstance("SHA-512");
+            byte[] bytes = md.digest(passwordToHash.concat(salt).getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length ;i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+        return generatedPassword;
     }
 }
