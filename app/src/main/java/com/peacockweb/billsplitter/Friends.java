@@ -1,5 +1,6 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +40,11 @@ public class Friends extends AppCompatActivity {
 
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+    }
+
+    public void onAddGroupClick(View view) {
+        Intent intent = new Intent(this, AddGroup.class);
+        startActivity(intent);
     }
 
     @Override
@@ -73,8 +80,8 @@ public class Friends extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new FriendList(), "Friends");
-        adapter.addFragment(new GroupList(), "Groups");
+        adapter.addFragment(new GroupFragment(), "Groups");
+        adapter.addFragment(new FriendFragment(), "Friends");
         viewPager.setAdapter(adapter);
     }
 

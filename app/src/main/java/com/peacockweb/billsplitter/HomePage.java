@@ -35,7 +35,7 @@ public class HomePage extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new SummaryFragment(), "Summary");
-        adapter.addFragment(new GroupList(), "Debts");
+        adapter.addFragment(new GroupFragment(), "Debts");
         viewPager.setAdapter(adapter);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -59,6 +59,11 @@ public class HomePage extends AppCompatActivity {
 
     public void addBill(View view) {
         Intent intent = new Intent(this, AddBill.class);
+        startActivity(intent);
+    }
+
+    public void onAddGroupClick(View view) {
+        Intent intent = new Intent(view.getContext(), AddGroup.class);
         startActivity(intent);
     }
 

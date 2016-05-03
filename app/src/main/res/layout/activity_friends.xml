@@ -65,7 +65,8 @@
             android:clickable="true"
             android:src="@drawable/add_person"
             android:layout_marginBottom="105dp"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"
+            android:onClick="onAddGroupClick" />
 
     </FrameLayout>
 </RelativeLayout>

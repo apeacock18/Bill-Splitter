@@ -14,17 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
-public class GroupList extends Fragment {
+public class FriendFragment extends Fragment {
 
-    String[] myStringArray = {"Group 1", "Group 2", "Group 3"};
+    String[] myStringArray = {"Friend 1", "Friend 2", "Friend 3"};
     private View view;
 
-    public GroupList() {}
+    public FriendFragment() {}
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -32,14 +30,14 @@ public class GroupList extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, myStringArray);
-        ListView listView1 = (ListView) view.findViewById(R.id.listView2);
+        ListView listView1 = (ListView) view.findViewById(R.id.listView);
         listView1.setAdapter(adapter);
         listView1.setOnItemClickListener(mMessageClickedHandler);
     }
 
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            Snackbar.make(view.findViewById(R.id.listView2), "This will show a record of all bills with this group.", Snackbar.LENGTH_LONG)
+            Snackbar.make(view.findViewById(R.id.listView), "This will show a record of all bills with this individual.", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show();
         }
@@ -49,7 +47,7 @@ public class GroupList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_two, container, false);
+        view = inflater.inflate(R.layout.fragment_one, container, false);
         return view;
     }
 }
