@@ -13,13 +13,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.util.ArrayList;
 
-public class FriendList extends Fragment {
 
-    String[] myStringArray = {"Friend 1", "Friend 2", "Friend 3"};
+public class SummaryFragment extends Fragment {
+
+    ArrayList<PaymentSummary> paymentSummaries = new ArrayList();
     private View view;
 
-    public FriendList() {}
+    public SummaryFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
@@ -28,11 +30,14 @@ public class FriendList extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_list_item_1, myStringArray);
-        ListView listView1 = (ListView) view.findViewById(R.id.listView);
-        listView1.setAdapter(adapter);
-        listView1.setOnItemClickListener(mMessageClickedHandler);
+        paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
+        paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
+        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
+
+        PaymentsListAdapter adapter = new PaymentsListAdapter(getContext(), paymentSummaries);
+        ListView summaryList = (ListView) view.findViewById(R.id.listView);
+        summaryList.setAdapter(adapter);
+        summaryList.setOnItemClickListener(mMessageClickedHandler);
     }
 
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
@@ -51,3 +56,4 @@ public class FriendList extends Fragment {
         return view;
     }
 }
+

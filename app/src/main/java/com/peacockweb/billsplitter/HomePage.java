@@ -2,6 +2,8 @@ package com.peacockweb.billsplitter;
 
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,9 +16,14 @@ import android.widget.ListView;
 
 import com.parse.Parse;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class HomePage extends AppCompatActivity {
 
-    String[] myStringArray = {"Expense 1", "Expense 2", "Expense 3", "Expense 4", "Expense 5", "Expense 6"};
+    ArrayList<PaymentSummary> paymentSummaries = new ArrayList();
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +31,29 @@ public class HomePage extends AppCompatActivity {
         setContentView(R.layout.activity_home_page);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, myStringArray);
+
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new SummaryFragment(), "Summary");
+        adapter.addFragment(new GroupList(), "Debts");
+        viewPager.setAdapter(adapter);
+
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+/*      paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
+        paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
+        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
+
+        PaymentsListAdapter adapter = new PaymentsListAdapter(this, paymentSummaries);
         ListView listView = (ListView) findViewById(R.id.main_bill_list);
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(mMessageClickedHandler);
+        listView.setOnItemClickListener(mMessageClickedHandler);*/
     }
 
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            Snackbar.make(findViewById(R.id.main_bill_list), "This will show details for the expense and allow the user to pay debts.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show();
+
         }
     };
 
