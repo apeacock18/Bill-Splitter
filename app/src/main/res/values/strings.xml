@@ -6,7 +6,7 @@
     <string name="title_activity_add_bill">AddBill</string>
     <string name="title_activity_friends_and_groups">FriendsAndGroups</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_friends">Friends</string>
     <string name="title_activity_settings">Settings</string>
