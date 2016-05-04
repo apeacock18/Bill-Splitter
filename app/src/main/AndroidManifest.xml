@@ -25,11 +25,6 @@
         <activity
             android:name=".HomePage"
             android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".AddBill"
@@ -71,7 +66,13 @@
             android:label="@string/title_activity_sign_up"></activity>
         <activity
             android:name=".HeaderPage"
-            android:label="@string/title_activity_header_page"></activity>
+            android:label="@string/title_activity_header_page">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".SignIn"
             android:label="@string/title_activity_sign_in"></activity>
