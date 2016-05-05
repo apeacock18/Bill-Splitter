@@ -1,5 +1,6 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.parse.FunctionCallback;
@@ -58,6 +60,12 @@ public class SignIn extends AppCompatActivity {
 
     public void SIdoneClick(View view) {
 
+        View v = this.getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+
         EditText username = (EditText) findViewById(R.id.SIemail);
         EditText password = (EditText) findViewById(R.id.SIpassword);
 
@@ -70,9 +78,16 @@ public class SignIn extends AppCompatActivity {
                     System.out.println(id);
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
                     finish();
+                    HeaderPage.hp.finish();
                     startActivity(intent);
                 } else {
-                    e.printStackTrace();
+                    Log.d("login", "Error: " + e.getMessage());
+                    if (e.getMessage().equals("0") || e.getMessage().equals("1"))
+                    {
+                        Snackbar.make(findViewById(R.id.SIdone), "Invalid username/password", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null)
+                                .show();
+                    }
                 }
             }
         });

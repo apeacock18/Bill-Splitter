@@ -1,5 +1,6 @@
 package com.peacockweb.billsplitter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,10 +12,13 @@ import com.parse.Parse;
 
 public class HeaderPage extends AppCompatActivity {
 
+    public static Activity hp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_header_page);
+        hp = this;
         Parse.initialize(new Parse.Configuration.Builder(getApplication().getApplicationContext())
                         .applicationId("SmKujk7VXA7gQcUNz6hHjbPWpk1jF0Wtp1RPZ71Z")
                         .clientKey("g1gsXIi0t2Hk1maTsl5lXGbEaqLMlIQE8MludaDW")

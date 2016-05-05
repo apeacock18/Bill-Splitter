@@ -68,12 +68,6 @@ public class SignUp extends AppCompatActivity {
 
         String str = fullName.getText().toString();
         String[] splited = str.split("\\s+");
-/*        user.put("fName", splited[0]);
-        user.put("lName", splited[1]);
-        user.put("username", username.getText().toString());
-        user.put("email", email.getText().toString());
-        user.put("password", get_SHA_512_SecurePassword(password.toString(), ""));
-        user.put("phoneNumber", phone.getText().toString());*/
 
         HashMap<String, String> params = new HashMap<>();
         params.put("fName", splited[0]);
@@ -88,6 +82,7 @@ public class SignUp extends AppCompatActivity {
                     System.out.println(id);
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
                     finish();
+                    HeaderPage.hp.finish();
                     startActivity(intent);
                 } else {
                     e.printStackTrace();

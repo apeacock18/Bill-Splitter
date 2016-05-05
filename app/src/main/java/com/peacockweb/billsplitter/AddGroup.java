@@ -1,5 +1,6 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Intent;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,22 +18,20 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.tokenautocomplete.TokenCompleteTextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class AddGroup extends AppCompatActivity implements View.OnClickListener, AddGroupMemberDialog.NoticeDialogListener, TokenCompleteTextView.TokenListener {
+public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.NoticeDialogListener, TokenCompleteTextView.TokenListener {
 
-    LinearLayout layoutOfPopup;
-    PopupWindow popupMessage;
-    EditText popupButton;
-    Button insidePopupButton;
-    TextView popupText;
-    ListPopupWindow friendsPopup;
+    EditText groupName;
 
     ArrayList<GroupMember> people;
     ArrayAdapter<GroupMember> adapter;
@@ -60,14 +59,7 @@ public class AddGroup extends AppCompatActivity implements View.OnClickListener,
             }
         });
 
-/*        people = new GroupMember[]{
-                new GroupMember("Marshall Weir", "marshall@example.com"),
-                new GroupMember("Margaret Smith", "margaret@example.com"),
-                new GroupMember("Max Jordan", "max@example.com"),
-                new GroupMember("Meg Peterson", "meg@example.com"),
-                new GroupMember("Amanda Johnson", "amanda@example.com"),
-                new GroupMember("Terry Anderson", "terry@example.com")
-        };*/
+        groupName = (EditText) findViewById(R.id.newGroupName);
 
         adapter = new ArrayAdapter<GroupMember>(this, android.R.layout.simple_list_item_1, people);
 
@@ -88,18 +80,23 @@ public class AddGroup extends AppCompatActivity implements View.OnClickListener,
     }
 
     public void onCreateGroupClick(View view) {
-        EditText groupName = (EditText) findViewById(R.id.newGroupName);
-        EditText groupMembers = (EditText) findViewById(R.id.addGroupMembers);
-
-        popupButton = (EditText) findViewById(R.id.addGroupMembers);
-        popupButton.setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View v) {
-        //popupMessage.showAsDropDown(popupButton, 0, 0);
-        //DialogFragment newFragment = new AddGroupMemberDialog();
-        //newFragment.show(getSupportFragmentManager(), "groupMember");
+        String str = groupName.getText().toString();
+        if (str != null && !str.isEmpty()) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("name", groupName.getText().toString());
+            ParseCloud.callFunctionInBackground("createGroup", params, new FunctionCallback<String>() {
+                public void done(String id, ParseException e) {
+                    if (e == null) {
+                        finish();
+                    } else {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        else {
+            finish();
+        }
     }
 
     @Override

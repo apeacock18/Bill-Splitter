@@ -30,8 +30,8 @@ public class GroupFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_list_item_1, myStringArray);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myStringArray);
+
         ListView listView1 = (ListView) view.findViewById(R.id.listView2);
         listView1.setAdapter(adapter);
         listView1.setOnItemClickListener(mMessageClickedHandler);
