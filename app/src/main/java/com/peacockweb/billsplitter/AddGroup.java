@@ -4,6 +4,7 @@ import android.support.annotation.RequiresPermission;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -15,7 +16,14 @@ import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.tokenautocomplete.TokenCompleteTextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddGroup extends AppCompatActivity implements View.OnClickListener, AddGroupMemberDialog.NoticeDialogListener, TokenCompleteTextView.TokenListener {
 
@@ -26,7 +34,7 @@ public class AddGroup extends AppCompatActivity implements View.OnClickListener,
     TextView popupText;
     ListPopupWindow friendsPopup;
 
-    GroupMember[] people;
+    ArrayList<GroupMember> people;
     ArrayAdapter<GroupMember> adapter;
     MembersCompletionView completionView;
 
@@ -36,14 +44,30 @@ public class AddGroup extends AppCompatActivity implements View.OnClickListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
 
-        people = new GroupMember[]{
+        people = new ArrayList();
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> users, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < users.size(); i++) {
+                        people.add(new GroupMember(
+                                users.get(i).getString("fName") + " " + users.get(i).getString("lName"),
+                                users.get(i).getString("username")));
+                    }
+                } else {
+                    Log.d("score", "Error: " + e.getMessage());
+                }
+            }
+        });
+
+/*        people = new GroupMember[]{
                 new GroupMember("Marshall Weir", "marshall@example.com"),
                 new GroupMember("Margaret Smith", "margaret@example.com"),
                 new GroupMember("Max Jordan", "max@example.com"),
                 new GroupMember("Meg Peterson", "meg@example.com"),
                 new GroupMember("Amanda Johnson", "amanda@example.com"),
                 new GroupMember("Terry Anderson", "terry@example.com")
-        };
+        };*/
 
         adapter = new ArrayAdapter<GroupMember>(this, android.R.layout.simple_list_item_1, people);
 
