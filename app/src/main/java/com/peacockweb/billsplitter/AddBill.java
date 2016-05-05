@@ -27,12 +27,15 @@ implements AdapterView.OnItemClickListener {
     ArrayList<String> addedFriends;
     AutoCompleteTextView billMembers;
     ListPopupWindow friendsPopup;
+    GroupMember[] people;
+    ArrayAdapter<GroupMember> adapter;
+
+    MembersCompletionView completionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_bill);
-
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         ActionBar ab = getSupportActionBar();
@@ -41,13 +44,6 @@ implements AdapterView.OnItemClickListener {
         billMembers = (AutoCompleteTextView) findViewById(R.id.billAddPersonText);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, friends);
         billMembers.setAdapter(adapter);
-
-        ArrayAdapter popupAdapter = new ArrayAdapter(
-                this, R.layout.list_item, addedFriends);
-        friendsPopup = new ListPopupWindow(this);
-        friendsPopup.setAdapter(popupAdapter);
-        friendsPopup.setWidth(500);
-        friendsPopup.setHeight(800);
 
         friendsPopup.setOnItemClickListener(
                 this);
