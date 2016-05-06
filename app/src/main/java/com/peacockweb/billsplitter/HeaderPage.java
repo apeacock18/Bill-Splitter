@@ -13,19 +13,32 @@ import com.parse.Parse;
 public class HeaderPage extends AppCompatActivity {
 
     public static Activity hp;
+    public static boolean startedFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_header_page);
-        hp = this;
-        Parse.initialize(new Parse.Configuration.Builder(getApplication().getApplicationContext())
-                        .applicationId("SmKujk7VXA7gQcUNz6hHjbPWpk1jF0Wtp1RPZ71Z")
-                        .clientKey("g1gsXIi0t2Hk1maTsl5lXGbEaqLMlIQE8MludaDW")
-                        .server("https://parseapi.back4app.com/") // The trailing slash is important.
+        if (!startedFlag) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_header_page);
+            startedFlag = true;
+            hp = this;
 
-                        .build()
-        );
+            Parse.initialize(new Parse.Configuration.Builder(getApplication().getApplicationContext())
+                            .applicationId("SmKujk7VXA7gQcUNz6hHjbPWpk1jF0Wtp1RPZ71Z")
+                            .clientKey("g1gsXIi0t2Hk1maTsl5lXGbEaqLMlIQE8MludaDW")
+                            .server("https://parseapi.back4app.com/") // The trailing slash is important.
+
+                            .build()
+            );
+        }
+    }
+
+    @Override
+    protected  void onDestroy() {
+        super.onDestroy();
+        if (isFinishing()) {
+            startedFlag = false;
+        }
     }
 
     @Override
