@@ -12,16 +12,26 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.peacockweb.billsplitter.util.TinyDB;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SignIn extends AppCompatActivity {
 
@@ -75,6 +85,7 @@ public class SignIn extends AppCompatActivity {
         ParseCloud.callFunctionInBackground("login", params, new FunctionCallback<String>() {
             public void done(String id, ParseException e) {
                 if (e == null) {
+                    initLocalSettings();
                     System.out.println(id);
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
                     finish();
@@ -82,8 +93,7 @@ public class SignIn extends AppCompatActivity {
                     startActivity(intent);
                 } else {
                     Log.d("login", "Error: " + e.getMessage());
-                    if (e.getMessage().equals("0") || e.getMessage().equals("1"))
-                    {
+                    if (e.getMessage().equals("0") || e.getMessage().equals("1")) {
                         Snackbar.make(findViewById(R.id.SIdone), "Invalid username/password", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null)
                                 .show();
@@ -112,5 +122,29 @@ public class SignIn extends AppCompatActivity {
             e.printStackTrace();
         }
         return generatedPassword;
+    }
+
+    public void initLocalSettings() {
+        final TinyDB tinyDB = new TinyDB(this);
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    ArrayList groups = new ArrayList<>();
+                    for (ParseObject obj : list) {
+                        List members = obj.getList("members");
+                        ArrayList<GroupMember> mems = new ArrayList();
+                        for (Object str : members) {
+                            mems.add(new GroupMember(str.toString()));
+                        }
+                        groups.add(new Group(mems, obj.getString("name")));
+                    }
+                    tinyDB.putListObject("groupsList", groups);
+                } else {
+                    Log.d("score", "Error: " + e.getMessage());
+                }
+            }
+        });
     }
 }

@@ -81,16 +81,16 @@ public class HomePage extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.friends)
-        {
-            Intent intent = new Intent(getApplicationContext(), Friends.class);
+        if (id == R.id.friends) {
+            Intent intent = new Intent(this, Friends.class);
             startActivity(intent);
+            return true;
         }
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-/*            Intent intent = new Intent(this, Settings.class);
-            startActivity(intent);*/
+            Intent intent = new Intent(this, Settings.class);
+            startActivity(intent);
             return true;
         }
 

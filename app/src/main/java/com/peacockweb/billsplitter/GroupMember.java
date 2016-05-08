@@ -8,8 +8,10 @@ import java.io.Serializable;
 public class GroupMember implements Serializable {
     private String name;
     private String username;
+    private String userID;
 
     public GroupMember(String n, String e) { name = n; username = e; }
+    public GroupMember(String n) { userID = n; }
 
     public String getName() { return name; }
     public String getUsername() { return username; }

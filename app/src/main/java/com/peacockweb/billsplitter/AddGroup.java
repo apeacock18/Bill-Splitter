@@ -93,7 +93,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     public void onCreateGroupClick(View view) {
         String str = groupName.getText().toString();
         if (str != null && !str.isEmpty()) {
-            /*HashMap<String, String> params = new HashMap<>();
+            HashMap<String, String> params = new HashMap<>();
             params.put("name", groupName.getText().toString());
             ParseCloud.callFunctionInBackground("createGroup", params, new FunctionCallback<String>() {
                 public void done(String id, ParseException e) {
@@ -103,7 +103,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         e.printStackTrace();
                     }
                 }
-            });*/
+            });
             Group group = new Group(addedMembers, str);
             ArrayList temp = tinyDB.getListObject("groupList", Group.class);
             temp.add(group);
