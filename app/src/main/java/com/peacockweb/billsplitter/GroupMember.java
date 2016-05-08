@@ -7,12 +7,12 @@ import java.io.Serializable;
  */
 public class GroupMember implements Serializable {
     private String name;
-    private String email;
+    private String username;
 
-    public GroupMember(String n, String e) { name = n; email = e; }
+    public GroupMember(String n, String e) { name = n; username = e; }
 
     public String getName() { return name; }
-    public String getEmail() { return email; }
+    public String getUsername() { return username; }
 
     @Override
     public String toString() { return name; }

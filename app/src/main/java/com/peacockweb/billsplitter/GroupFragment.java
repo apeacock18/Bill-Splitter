@@ -13,10 +13,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.peacockweb.billsplitter.util.TinyDB;
+
+import java.util.ArrayList;
+
 
 public class GroupFragment extends Fragment {
 
-    String[] myStringArray = {"Group 1", "Group 2", "Group 3"};
+    ArrayList groupsData;
+    TinyDB tinyDB;
     private View view;
 
     public GroupFragment() {}
@@ -30,7 +35,9 @@ public class GroupFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, myStringArray);
+        tinyDB = new TinyDB(getContext());
+        groupsData = tinyDB.getListObject("groupList", Group.class);
+        GroupListAdapter adapter = new GroupListAdapter(getContext(), groupsData);
 
         ListView listView1 = (ListView) view.findViewById(R.id.listView2);
         listView1.setAdapter(adapter);

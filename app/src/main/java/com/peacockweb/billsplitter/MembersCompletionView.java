@@ -25,7 +25,7 @@ public class MembersCompletionView extends TokenCompleteTextView<GroupMember> {
 
         LayoutInflater l = (LayoutInflater)getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         LinearLayout view = (LinearLayout)l.inflate(R.layout.members_token, (ViewGroup)MembersCompletionView.this.getParent(), false);
-        ((TextView)view.findViewById(R.id.name)).setText(member.getEmail());
+        ((TextView)view.findViewById(R.id.name)).setText(member.getName());
 
         return view;
     }
