@@ -38,8 +38,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
-        android:layout_alignParentRight="true"
-        android:hint="Add people to group" />
+        android:hint="Add people to group"
+        android:layout_alignRight="@+id/createGroupBtn"
+        android:layout_alignEnd="@+id/createGroupBtn" />
 
     <Button
         android:layout_width="200dp"
@@ -50,5 +51,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="123dp"
         android:onClick="onCreateGroupClick" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/addMemberBtn"
+        android:layout_alignBottom="@+id/addGroupMembers"
+        android:layout_toRightOf="@+id/addGroupMembers"
+        android:layout_toEndOf="@+id/addGroupMembers"
+        android:onClick="addMemberClick" />
 
 </RelativeLayout>

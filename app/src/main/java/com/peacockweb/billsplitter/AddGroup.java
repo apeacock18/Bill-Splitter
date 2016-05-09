@@ -3,6 +3,8 @@ package com.peacockweb.billsplitter;
 import android.content.Intent;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,6 +32,7 @@ import com.tokenautocomplete.TokenCompleteTextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.NoticeDialogListener, TokenCompleteTextView.TokenListener {
 
@@ -37,8 +40,11 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
 
     ArrayList<GroupMember> people;
     ArrayList<GroupMember> addedMembers = new ArrayList();
+    ArrayList knownMembers;
     ArrayAdapter<GroupMember> adapter;
     MembersCompletionView completionView;
+    AddGroupMemberDialog dialog;
+    FragmentManager manager;
     TinyDB tinyDB;
 
 
@@ -47,8 +53,12 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
 
+        dialog = new AddGroupMemberDialog();
+        manager = getSupportFragmentManager();
+
         tinyDB = new TinyDB(this);
         people = new ArrayList();
+        knownMembers = tinyDB.getListObject("knownMembers", GroupMember.class);
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> users, ParseException e) {
@@ -56,7 +66,9 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                     for (int i = 0; i < users.size(); i++) {
                         people.add(new GroupMember(
                                 users.get(i).getString("fName") + " " + users.get(i).getString("lName"),
-                                users.get(i).getString("username")));
+                                users.get(i).getString("username"),
+                                users.get(i).getObjectId()
+                        ));
                     }
                 } else {
                     Log.d("score", "Error: " + e.getMessage());
@@ -101,9 +113,9 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                     if (e == null) {
                         final String groupId = id;
 
-                        ArrayList<String> usernames = new ArrayList();
+                        final ArrayList<String> usernames = new ArrayList();
                         for (GroupMember gm : addedMembers) {
-                            usernames.add(gm.getName());
+                            usernames.add(gm.getUsername());
                         }
 
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
@@ -111,14 +123,31 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         query.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> users, ParseException e) {
                                 if (e == null) {
+                                    for (GroupMember mem : addedMembers)
+                                    {
+                                        if (!usernames.contains(mem.getUsername())) {
+                                            knownMembers.add(mem);
+                                        }
+                                    }
+                                    tinyDB.putListObject("knownMembers", knownMembers);
+
+                                    System.out.println("Made it here...");
                                     for (ParseObject user : users) {
                                         HashMap<String, String> params1 = new HashMap<>();
                                         params1.put("userId", user.getObjectId());
-                                        ParseCloud.callFunctionInBackground("addUserToGroup", params1, new FunctionCallback<String>() {
-                                            public void done(String id, ParseException e) {
+                                        params1.put("groupId", groupId);
+                                        ParseCloud.callFunctionInBackground("addUserToGroup", params1, new FunctionCallback<Object>() {
+                                            public void done(Object id, ParseException e) {
+                                                if (e == null) {
+                                                    System.out.println("User should have been added here...");
+                                                }
+                                                else {
+                                                    System.out.println("Error: " + e.getMessage());
+                                                }
                                             }
                                         });
                                     }
+                                    System.out.println("Made it this far...");
                                 }
                                 else {
                                     System.out.println("ERRRROOOOORRRRRR: " + e.getMessage());
@@ -147,7 +176,16 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
 
     @Override
     public void onDialogPositiveClick(String username) {
-        EditText text = (EditText) findViewById(R.id.addGroupMembers);
-        text.setText(username);
+        for (Object obj : knownMembers) {
+            GroupMember mem = (GroupMember) obj;
+            String _username = mem.getUsername();
+            if (_username.equals(username)) {
+                completionView.addObject(new GroupMember(mem.getName(), username, mem.getUserId()));
+            }
+        }
+    }
+
+    public void addMemberClick(View view) {
+        dialog.show(manager, "addGroupMember");
     }
 }

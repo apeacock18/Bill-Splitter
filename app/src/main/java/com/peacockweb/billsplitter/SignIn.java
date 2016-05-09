@@ -39,12 +39,14 @@ public class SignIn extends AppCompatActivity {
 
     ParseObject user;
     TinyDB tinyDB;
+    ArrayList<String> knownUserUsernames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         tinyDB = new TinyDB(this);
+        knownUserUsernames = new ArrayList();
     }
 
     @Override
@@ -90,13 +92,88 @@ public class SignIn extends AppCompatActivity {
         final EditText username = (EditText) findViewById(R.id.SIemail);
         final EditText password = (EditText) findViewById(R.id.SIpassword);
 
+        // Login user to Parse through cloud code
         HashMap<String, String> params = new HashMap<>();
         params.put("username", username.getText().toString());
         params.put("password", get_SHA_512_SecurePassword(password.getText().toString(), ""));
         ParseCloud.callFunctionInBackground("login", params, new FunctionCallback<String>() {
             public void done(String id, ParseException e) {
                 if (e == null) {
+                    // Run if user login is successful
+                    tinyDB.putString("userId", id);
+
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                    query.whereEqualTo("username", username.getText().toString());
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        public void done(List<ParseObject> list, ParseException e) {
+                            if (e == null) {
+                                user = list.get(0);;
+                                // Query Parse to store local group data
+                                if (user.getList("groups") != null) {
+                                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
+                                    // Only pull groups owned by current user
+                                    query.whereContainedIn("objectId", user.getList("groups"));
+                                    query.findInBackground(new FindCallback<ParseObject>() {
+                                        public void done(List<ParseObject> list, ParseException e) {
+                                            if (e == null) {
+                                                if (list.isEmpty()) {
+                                                    System.out.println("Whoop, whoop!!! The group wasn't found!!!");
+                                                }
+                                                // Store local data for groups and group members
+                                                ArrayList groups = new ArrayList<>();
+                                                for (ParseObject obj : list) {
+                                                    List members = obj.getList("members");
+                                                    ArrayList<GroupMember> mems = new ArrayList();
+                                                    for (Object str : members) {
+                                                        mems.add(new GroupMember(str.toString()));
+                                                        if (!knownUserUsernames.contains(str.toString())) {
+                                                            knownUserUsernames.add(str.toString());
+                                                        }
+                                                    }
+                                                    groups.add(new Group(mems, obj.getString("name")));
+                                                }
+                                                tinyDB.putListObject("groupList", groups);
+
+                                                final ArrayList knownMembers = new ArrayList();
+                                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                                                // Only pull groups owned by current user
+                                                query.whereContainedIn("objectId", knownUserUsernames);
+                                                query.findInBackground(new FindCallback<ParseObject>() {
+                                                    public void done(List<ParseObject> users, ParseException e) {
+                                                        if (e == null) {
+                                                            for (ParseObject user : users) {
+                                                                knownMembers.add(new GroupMember(
+                                                                        user.getString("fName") + " " + user.getString("lName"),
+                                                                        user.getString("username"),
+                                                                        user.getObjectId()
+                                                                ));
+                                                            }
+                                                            tinyDB.putListObject("knownMembers", knownMembers);
+
+                                                            Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                                                            finish();
+                                                            HeaderPage.hp.finish();
+                                                            startActivity(intent);
+                                                        }
+                                                        else {
+                                                            Log.d("members", "Error: " + e.getMessage());
+                                                        }
+                                                    }
+                                                });
+
+                                            } else {
+                                                Log.d("users", "Error: " + e.getMessage());
+                                            }
+                                        }
+                                    });
+                                }
+                            } else {
+                                Log.d("user", "Error: " + e.getMessage());
+                            }
+                        }
+                    });
+
+                    /*ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
                     query.whereEqualTo("username", username.getText().toString());
                     query.findInBackground(new FindCallback<ParseObject>() {
                         public void done(List<ParseObject> list, ParseException e) {
@@ -113,7 +190,7 @@ public class SignIn extends AppCompatActivity {
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
                     finish();
                     HeaderPage.hp.finish();
-                    startActivity(intent);
+                    startActivity(intent); */
                 } else {
                     Log.d("login", "Error: " + e.getMessage());
                     if (e.getMessage().equals("0") || e.getMessage().equals("1")) {
@@ -164,6 +241,7 @@ public class SignIn extends AppCompatActivity {
                             ArrayList<GroupMember> mems = new ArrayList();
                             for (Object str : members) {
                                 mems.add(new GroupMember(str.toString()));
+
                             }
                             groups.add(new Group(mems, obj.getString("name")));
                         }

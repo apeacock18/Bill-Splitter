@@ -8,13 +8,19 @@ import java.io.Serializable;
 public class GroupMember implements Serializable {
     private String name;
     private String username;
-    private String userID;
+    private String userId;
 
-    public GroupMember(String n, String e) { name = n; username = e; }
-    public GroupMember(String n) { userID = n; }
+    public GroupMember(String name, String username, String userId) {
+        this.name = name;
+        this.username = username;
+        this.userId = userId;
+    }
+
+    public GroupMember(String n) { username = n; }
 
     public String getName() { return name; }
     public String getUsername() { return username; }
+    public String getUserId() { return userId; }
 
     @Override
     public String toString() { return name; }

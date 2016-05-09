@@ -35,9 +35,9 @@ public class MembersCompletionView extends TokenCompleteTextView<GroupMember> {
         //Stupid simple example of guessing if we have an email or not
         int index = completionText.indexOf('@');
         if (index == -1) {
-            return new GroupMember(completionText, completionText.replace(" ", "") + "@example.com");
+            return new GroupMember(completionText);
         } else {
-            return new GroupMember(completionText.substring(0, index), completionText);
+            return new GroupMember(completionText);
         }
     }
 }
