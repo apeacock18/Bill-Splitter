@@ -45,8 +45,6 @@ implements AdapterView.OnItemClickListener {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, friends);
         billMembers.setAdapter(adapter);
 
-        friendsPopup.setOnItemClickListener(
-                this);
         billMembers.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();

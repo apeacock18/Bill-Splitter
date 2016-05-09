@@ -1,6 +1,8 @@
 package com.peacockweb.billsplitter;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -115,6 +117,11 @@ public class SignUp extends AppCompatActivity {
         if (FieldsAreValid()) {
             String str = fullName.getText().toString();
             String[] splited = str.split("\\s+");
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear();
+            editor.commit();
 
             HashMap<String, String> params = new HashMap<>();
             params.put("fName", splited[0]);

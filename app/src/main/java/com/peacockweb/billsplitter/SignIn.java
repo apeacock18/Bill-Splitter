@@ -2,6 +2,8 @@ package com.peacockweb.billsplitter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,10 +37,14 @@ import java.util.List;
 
 public class SignIn extends AppCompatActivity {
 
+    ParseObject user;
+    TinyDB tinyDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+        tinyDB = new TinyDB(this);
     }
 
     @Override
@@ -76,8 +82,13 @@ public class SignIn extends AppCompatActivity {
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
         }
 
-        EditText username = (EditText) findViewById(R.id.SIemail);
-        EditText password = (EditText) findViewById(R.id.SIpassword);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+
+        final EditText username = (EditText) findViewById(R.id.SIemail);
+        final EditText password = (EditText) findViewById(R.id.SIpassword);
 
         HashMap<String, String> params = new HashMap<>();
         params.put("username", username.getText().toString());
@@ -85,7 +96,19 @@ public class SignIn extends AppCompatActivity {
         ParseCloud.callFunctionInBackground("login", params, new FunctionCallback<String>() {
             public void done(String id, ParseException e) {
                 if (e == null) {
-                    initLocalSettings();
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                    query.whereEqualTo("username", username.getText().toString());
+                    query.findInBackground(new FindCallback<ParseObject>() {
+                        public void done(List<ParseObject> list, ParseException e) {
+                            if (e == null) {
+                                user = list.get(0);
+                                tinyDB.putString("userId", user.getObjectId());
+                                initLocalSettings();
+                            } else {
+                                Log.d("user", "Error: " + e.getMessage());
+                            }
+                        }
+                    });
                     System.out.println(id);
                     Intent intent = new Intent(getApplicationContext(), HomePage.class);
                     finish();
@@ -125,26 +148,31 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void initLocalSettings() {
-        final TinyDB tinyDB = new TinyDB(this);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> list, ParseException e) {
-                if (e == null) {
-                    ArrayList groups = new ArrayList<>();
-                    for (ParseObject obj : list) {
-                        List members = obj.getList("members");
-                        ArrayList<GroupMember> mems = new ArrayList();
-                        for (Object str : members) {
-                            mems.add(new GroupMember(str.toString()));
+        if (user.getList("groups") != null) {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
+            query.whereContainedIn("objectId", user.getList("groups"));
+            query.findInBackground(new FindCallback<ParseObject>() {
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (e == null) {
+                        if (list.isEmpty()) {
+                            System.out.println("Whoop, whoop!!! The group wasn't found!!!");
                         }
-                        groups.add(new Group(mems, obj.getString("name")));
+                        ArrayList groups = new ArrayList<>();
+                        for (ParseObject obj : list) {
+                            List members = obj.getList("members");
+                            ArrayList<GroupMember> mems = new ArrayList();
+                            for (Object str : members) {
+                                mems.add(new GroupMember(str.toString()));
+                            }
+                            groups.add(new Group(mems, obj.getString("name")));
+                        }
+                        tinyDB.putListObject("groupList", groups);
+                    } else {
+                        Log.d("score", "Error: " + e.getMessage());
                     }
-                    tinyDB.putListObject("groupsList", groups);
-                } else {
-                    Log.d("score", "Error: " + e.getMessage());
                 }
-            }
-        });
+            });
+        }
     }
 }

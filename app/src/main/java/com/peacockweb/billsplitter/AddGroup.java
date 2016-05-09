@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -98,6 +99,34 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
             ParseCloud.callFunctionInBackground("createGroup", params, new FunctionCallback<String>() {
                 public void done(String id, ParseException e) {
                     if (e == null) {
+                        final String groupId = id;
+
+                        ArrayList<String> usernames = new ArrayList();
+                        for (GroupMember gm : addedMembers) {
+                            usernames.add(gm.getName());
+                        }
+
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                        query.whereContainedIn("username", usernames);
+                        query.findInBackground(new FindCallback<ParseObject>() {
+                            public void done(List<ParseObject> users, ParseException e) {
+                                if (e == null) {
+                                    for (ParseObject user : users) {
+                                        HashMap<String, String> params1 = new HashMap<>();
+                                        params1.put("userId", user.getObjectId());
+                                        ParseCloud.callFunctionInBackground("addUserToGroup", params1, new FunctionCallback<String>() {
+                                            public void done(String id, ParseException e) {
+                                            }
+                                        });
+                                    }
+                                }
+                                else {
+                                    System.out.println("ERRRROOOOORRRRRR: " + e.getMessage());
+                                }
+                            }
+                        });
+
+
                         finish();
                     } else {
                         e.printStackTrace();
