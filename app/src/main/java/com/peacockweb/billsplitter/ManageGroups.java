@@ -18,7 +18,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Friends extends AppCompatActivity {
+public class ManageGroups extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -65,7 +65,7 @@ public class Friends extends AppCompatActivity {
         {
 /*            Intent intent = new Intent(getApplicationContext(), HomePage.class);
             startActivity(intent);*/
-            Snackbar.make(findViewById(R.id.editText10), "Successfully created bill!", Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.editText5), "Successfully created bill!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show();
         }
@@ -81,7 +81,7 @@ public class Friends extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new GroupFragment(), "Groups");
-        adapter.addFragment(new FriendFragment(), "Friends");
+        adapter.addFragment(new FriendFragment(), "_Friends");
         viewPager.setAdapter(adapter);
     }
 

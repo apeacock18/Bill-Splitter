@@ -82,7 +82,7 @@ public class HomePage extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.friends) {
-            Intent intent = new Intent(this, Friends.class);
+            Intent intent = new Intent(this, ManageGroups.class);
             startActivity(intent);
             return true;
         }

@@ -109,6 +109,8 @@ public class SignUp extends AppCompatActivity {
     }
 
     public void signUpBack(View view) {
+        finish();
+        HeaderPage.getInstance().finish();
         Intent intent = new Intent(this, HeaderPage.class);
         startActivity(intent);
     }
@@ -136,16 +138,13 @@ public class SignUp extends AppCompatActivity {
                         System.out.println(id);
                         Intent intent = new Intent(getApplicationContext(), HomePage.class);
                         finish();
-                        HeaderPage.hp.finish();
+                        HeaderPage.getInstance().finish();
                         startActivity(intent);
                     } else {
                         e.printStackTrace();
                     }
                 }
             });
-
-            Intent intent = new Intent(getApplicationContext(), HomePage.class);
-            startActivity(intent);
         }
     }
 

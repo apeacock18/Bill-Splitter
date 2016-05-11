@@ -22,15 +22,10 @@ import java.util.List;
 public class AddBill extends AppCompatActivity
 implements AdapterView.OnItemClickListener {
 
-
-    String[] friends = {"John Peterson", "Chris Baines", "Test","Andrew Peacock", "Davis Mariotti"};
     ArrayList<String> addedFriends;
     AutoCompleteTextView billMembers;
-    ListPopupWindow friendsPopup;
-    GroupMember[] people;
+    ListPopupWindow friendsDialog;
     ArrayAdapter<GroupMember> adapter;
-
-    MembersCompletionView completionView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +37,6 @@ implements AdapterView.OnItemClickListener {
         ab.setDisplayHomeAsUpEnabled(true);
 
         billMembers = (AutoCompleteTextView) findViewById(R.id.billAddPersonText);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, friends);
         billMembers.setAdapter(adapter);
 
         billMembers.setOnClickListener(new View.OnClickListener() {
@@ -70,33 +64,25 @@ implements AdapterView.OnItemClickListener {
                 billMembers.append(", ");
             }
         }
-        friendsPopup.dismiss();
+        friendsDialog.dismiss();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.tool_bar_actions, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         if (id == R.id.action_favorite)
         {
-/*            Intent intent = new Intent(getApplicationContext(), HomePage.class);
-            startActivity(intent);*/
             Snackbar.make(findViewById(R.id.editText), "Successfully created bill!", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show();
         }
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

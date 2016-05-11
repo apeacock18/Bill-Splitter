@@ -72,6 +72,8 @@ public class SignIn extends AppCompatActivity {
     }
 
     public void SIbackClick(View view) {
+        HeaderPage.getInstance().finish();
+        finish();
         Intent intent = new Intent(this, HeaderPage.class);
         startActivity(intent);
     }
@@ -164,7 +166,7 @@ public class SignIn extends AppCompatActivity {
 
                                                             Intent intent = new Intent(getApplicationContext(), HomePage.class);
                                                             finish();
-                                                            HeaderPage.hp.finish();
+                                                            HeaderPage.getInstance().finish();
                                                             startActivity(intent);
                                                         }
                                                         else {
