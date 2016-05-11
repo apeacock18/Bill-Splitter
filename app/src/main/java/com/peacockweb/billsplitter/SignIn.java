@@ -102,6 +102,7 @@ public class SignIn extends AppCompatActivity {
                     // Run if user login is successful
                     tinyDB.putString("userId", id);
 
+                    // Pull the current Parse user
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
                     query.whereEqualTo("username", username.getText().toString());
                     query.findInBackground(new FindCallback<ParseObject>() {
@@ -110,44 +111,55 @@ public class SignIn extends AppCompatActivity {
                                 user = list.get(0);;
                                 // Query Parse to store local group data
                                 if (user.getList("groups") != null) {
+                                    final ArrayList groups = new ArrayList<>();
                                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
-                                    // Only pull groups owned by current user
+                                    // Pull all groups owned by current user
                                     query.whereContainedIn("objectId", user.getList("groups"));
                                     query.findInBackground(new FindCallback<ParseObject>() {
                                         public void done(List<ParseObject> list, ParseException e) {
                                             if (e == null) {
-                                                if (list.isEmpty()) {
-                                                    System.out.println("Whoop, whoop!!! The group wasn't found!!!");
-                                                }
-                                                // Store local data for groups and group members
-                                                ArrayList groups = new ArrayList<>();
+                                                final List<ParseObject> parseGroups = list;
+                                                // Cycle through each of user's groups
                                                 for (ParseObject obj : list) {
+                                                    // Pull all members from each group
                                                     List members = obj.getList("members");
-                                                    ArrayList<GroupMember> mems = new ArrayList();
                                                     for (Object str : members) {
-                                                        mems.add(new GroupMember(str.toString()));
+                                                        // Add each userId to "known users"
                                                         if (!knownUserUsernames.contains(str.toString())) {
                                                             knownUserUsernames.add(str.toString());
                                                         }
                                                     }
-                                                    groups.add(new Group(mems, obj.getString("name")));
                                                 }
-                                                tinyDB.putListObject("groupList", groups);
 
-                                                final ArrayList knownMembers = new ArrayList();
+                                                // Pull all known user objects from parse
                                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
-                                                // Only pull groups owned by current user
                                                 query.whereContainedIn("objectId", knownUserUsernames);
                                                 query.findInBackground(new FindCallback<ParseObject>() {
                                                     public void done(List<ParseObject> users, ParseException e) {
                                                         if (e == null) {
-                                                            for (ParseObject user : users) {
+
+                                                            ArrayList groups = new ArrayList();
+                                                            ArrayList knownMembers = new ArrayList();
+
+                                                            for (ParseObject parseGroup : parseGroups) {
+                                                                ArrayList<GroupMember> mems = new ArrayList();
+                                                                for (ParseObject parseUser : users) {
+                                                                    if (parseGroup.getList("members").contains(parseUser.getObjectId())) {
+                                                                        mems.add(new GroupMember(parseUser.getString("name"), parseUser.getString("username"), parseUser.getObjectId()));
+                                                                    }
+                                                                }
+                                                                groups.add(new Group(mems, parseGroup.getString("name")));
+                                                            }
+
+                                                            for (ParseObject parseUser : users) {
                                                                 knownMembers.add(new GroupMember(
-                                                                        user.getString("fName") + " " + user.getString("lName"),
-                                                                        user.getString("username"),
-                                                                        user.getObjectId()
+                                                                        parseUser.getString("name"),
+                                                                        parseUser.getString("username"),
+                                                                        parseUser.getObjectId()
                                                                 ));
                                                             }
+
+                                                            tinyDB.putListObject("groupList", groups);
                                                             tinyDB.putListObject("knownMembers", knownMembers);
 
                                                             Intent intent = new Intent(getApplicationContext(), HomePage.class);
@@ -241,7 +253,6 @@ public class SignIn extends AppCompatActivity {
                             ArrayList<GroupMember> mems = new ArrayList();
                             for (Object str : members) {
                                 mems.add(new GroupMember(str.toString()));
-
                             }
                             groups.add(new Group(mems, obj.getString("name")));
                         }

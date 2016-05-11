@@ -16,8 +16,13 @@ public class Group {
 
     public String getMemberNames() {
         String str = "";
-        for (GroupMember mem : groupMembers) {
-            str += mem.getName() + ", ";
+        for (int i = 0; i < groupMembers.size(); i++) {
+            if (i == 0) {
+                str += groupMembers.get(i).getName();
+            }
+            else {
+                str += ", " + groupMembers.get(i).getName();
+            }
         }
         return str;
     }

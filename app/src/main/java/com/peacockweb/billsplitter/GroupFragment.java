@@ -20,7 +20,8 @@ import java.util.ArrayList;
 
 public class GroupFragment extends Fragment {
 
-    ArrayList groupsData;
+    public static ArrayList groupsData;
+    public static GroupListAdapter groupAdapter;
     TinyDB tinyDB;
     private View view;
 
@@ -37,10 +38,10 @@ public class GroupFragment extends Fragment {
 
         tinyDB = new TinyDB(getContext());
         groupsData = tinyDB.getListObject("groupList", Group.class);
-        GroupListAdapter adapter = new GroupListAdapter(getContext(), groupsData);
+        groupAdapter = new GroupListAdapter(getContext(), groupsData);
 
         ListView listView1 = (ListView) view.findViewById(R.id.listView2);
-        listView1.setAdapter(adapter);
+        listView1.setAdapter(groupAdapter);
         listView1.setOnItemClickListener(mMessageClickedHandler);
     }
 

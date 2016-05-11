@@ -35,7 +35,7 @@ public class HomePage extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new SummaryFragment(), "Summary");
-        adapter.addFragment(new GroupFragment(), "Debts");
+        adapter.addFragment(new SummaryFragment(), "Debts");
         viewPager.setAdapter(adapter);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);

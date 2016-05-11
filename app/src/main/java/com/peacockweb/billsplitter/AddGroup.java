@@ -46,6 +46,8 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     AddGroupMemberDialog dialog;
     FragmentManager manager;
     TinyDB tinyDB;
+    public static boolean flag1;
+    public static boolean flag2;
 
 
     @Override
@@ -65,7 +67,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                 if (e == null) {
                     for (int i = 0; i < users.size(); i++) {
                         people.add(new GroupMember(
-                                users.get(i).getString("fName") + " " + users.get(i).getString("lName"),
+                                users.get(i).getString("name"),
                                 users.get(i).getString("username"),
                                 users.get(i).getObjectId()
                         ));
@@ -123,8 +125,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         query.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> users, ParseException e) {
                                 if (e == null) {
-                                    for (GroupMember mem : addedMembers)
-                                    {
+                                    for (GroupMember mem : addedMembers) {
                                         if (!usernames.contains(mem.getUsername())) {
                                             knownMembers.add(mem);
                                         }
@@ -132,24 +133,35 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                                     tinyDB.putListObject("knownMembers", knownMembers);
 
                                     System.out.println("Made it here...");
-                                    for (ParseObject user : users) {
-                                        HashMap<String, String> params1 = new HashMap<>();
-                                        params1.put("userId", user.getObjectId());
-                                        params1.put("groupId", groupId);
-                                        ParseCloud.callFunctionInBackground("addUserToGroup", params1, new FunctionCallback<Object>() {
-                                            public void done(Object id, ParseException e) {
-                                                if (e == null) {
-                                                    System.out.println("User should have been added here...");
+                                    //while (flag1) {
+                                        for (ParseObject user : users) {
+                                            flag2 = true;
+                                            HashMap<String, String> params1 = new HashMap<>();
+                                            params1.put("userId", user.getObjectId());
+                                            params1.put("groupId", groupId);
+                                            ParseCloud.callFunctionInBackground("addUserToGroup", params1, new FunctionCallback<Object>() {
+                                                public void done(Object id, ParseException e) {
+                                                    if (e == null) {
+                                                        System.out.println("User should have been added here...");
+                                                    } else {
+                                                        System.out.println("Error: " + e.getMessage());
+                                                    }
+                                                    flag2 = false;
                                                 }
-                                                else {
-                                                    System.out.println("Error: " + e.getMessage());
-                                                }
-                                            }
-                                        });
-                                    }
-                                    System.out.println("Made it this far...");
-                                }
-                                else {
+                                            });
+                                            while(flag2) {}
+                                        }
+                                        //flag1 = true;
+                                    //}
+                                    Group group = new Group(addedMembers, groupName.getText().toString());
+                                    ArrayList temp = tinyDB.getListObject("groupList", Group.class);
+                                    temp.add(group);
+                                    tinyDB.putListObject("groupList", temp);
+                                    ArrayList arr = tinyDB.getListObject("groupList", Group.class);
+                                    System.out.println(((Group) arr.get(0)).name + " found!");
+                                    GroupFragment.groupsData.add(group);
+                                    GroupFragment.groupAdapter.notifyDataSetChanged();
+                                } else {
                                     System.out.println("ERRRROOOOORRRRRR: " + e.getMessage());
                                 }
                             }
@@ -162,12 +174,12 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                     }
                 }
             });
-            Group group = new Group(addedMembers, str);
+            /*Group group = new Group(addedMembers, str);
             ArrayList temp = tinyDB.getListObject("groupList", Group.class);
             temp.add(group);
             tinyDB.putListObject("groupList", temp);
             ArrayList arr = tinyDB.getListObject("groupList", Group.class);
-            System.out.println(((Group)arr.get(0)).name + " found!");
+            System.out.println(((Group)arr.get(0)).name + " found!");*/
         }
         else {
             finish();
