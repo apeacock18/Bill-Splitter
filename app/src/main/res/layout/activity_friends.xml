@@ -9,7 +9,8 @@
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/view2">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -48,25 +49,16 @@
         android:layout_height="match_parent">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/new_bill"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_gravity="bottom|right"
-            android:clickable="true"
-            android:src="@drawable/ic_action_name2"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp" />
-
-        <android.support.design.widget.FloatingActionButton
             android:id="@+id/new_friend"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:layout_gravity="bottom|right"
+            android:layout_gravity="right|bottom"
             android:clickable="true"
-            android:src="@drawable/add_person"
-            android:layout_marginBottom="105dp"
-            android:layout_marginRight="10dp"
-            android:onClick="onAddGroupClick" />
-
+            android:src="@drawable/add_group"
+            android:onClick="onAddGroupClick"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/view2"
+            android:layout_alignEnd="@+id/view2" />
     </FrameLayout>
+
 </RelativeLayout>

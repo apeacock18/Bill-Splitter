@@ -1,14 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.peacockweb.billsplitter.ManageGroups">
-
-    <item
-        android:id="@+id/add_friend"
-        android:icon="@mipmap/person_add"
-        android:title="Save"
-        app:showAsAction="ifRoom"/>
-
+    tools:context="com.peacockweb.billsplitter.ManageFriends">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
 </menu>

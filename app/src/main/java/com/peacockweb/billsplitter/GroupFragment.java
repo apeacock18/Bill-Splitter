@@ -11,8 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.peacockweb.billsplitter.util.TinyDB;
 
 import java.util.ArrayList;
@@ -40,16 +43,17 @@ public class GroupFragment extends Fragment {
         groupsData = tinyDB.getListObject("groupList", Group.class);
         groupAdapter = new GroupListAdapter(getContext(), groupsData);
 
-        ListView listView1 = (ListView) view.findViewById(R.id.listView2);
+        ListView listView1 = (ListView) view.findViewById(R.id.groupsList);
         listView1.setAdapter(groupAdapter);
         listView1.setOnItemClickListener(mMessageClickedHandler);
     }
 
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
-            Snackbar.make(view.findViewById(R.id.listView2), "This will show a record of all bills with this group.", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show();
+            Button currentGroup = (Button) getActivity().findViewById(R.id.currentGroupButton);
+            Group group = (Group) groupsData.get(position);
+            currentGroup.setText(group.name);
+            tinyDB.putObject("currentGroup", group);
         }
     };
 
@@ -57,7 +61,7 @@ public class GroupFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_two, container, false);
+        view = inflater.inflate(R.layout.group_fragment, container, false);
         return view;
     }
 }

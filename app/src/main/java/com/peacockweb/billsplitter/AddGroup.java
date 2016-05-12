@@ -90,17 +90,14 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     @Override
     public void onTokenAdded(Object token) {
         GroupMember mem = (GroupMember) token;
-        System.out.println("Added: " + mem.getUsername());
         addedMembers.add(mem);
+        System.out.println("Added: " + mem.getUsername());
     }
 
     @Override
     public void onTokenRemoved(Object token) {
-        System.out.println("Removed: " + token);
         addedMembers.remove(token);
-        for (GroupMember mem : addedMembers) {
-            System.out.println(mem.getName() + " still here");
-        }
+        System.out.println("Removed: " + token);
     }
 
     public void onCreateGroupClick(View view) {
@@ -152,7 +149,6 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                                     temp.add(group);
                                     tinyDB.putListObject("groupList", temp);
                                     ArrayList arr = tinyDB.getListObject("groupList", Group.class);
-                                    System.out.println(((Group) arr.get(0)).name + " found!");
                                     GroupFragment.groupsData.add(group);
                                     GroupFragment.groupAdapter.notifyDataSetChanged();
                                 } else {
@@ -160,8 +156,6 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                                 }
                             }
                         });
-
-
                         finish();
                     } else {
                         e.printStackTrace();

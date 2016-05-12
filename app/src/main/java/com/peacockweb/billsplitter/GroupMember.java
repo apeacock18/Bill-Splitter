@@ -24,4 +24,15 @@ public class GroupMember implements Serializable {
 
     @Override
     public String toString() { return name; }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof GroupMember))return false;
+        GroupMember otherMember = (GroupMember)other;
+        if (!otherMember.getUserId().equals(userId)) return false;
+
+        return true;
+    }
 }
