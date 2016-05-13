@@ -24,7 +24,7 @@ public class PopupListWindow extends Activity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_popup_list_window);
-        usernameText = (EditText) findViewById(
+        /*usernameText = (EditText) findViewById(
                 R.id.editText5);
 
         listPopupWindow = new ListPopupWindow(
@@ -45,7 +45,7 @@ public class PopupListWindow extends Activity
             public void onClick(View v) {
                 listPopupWindow.show();
             }
-        });
+        });*/
     }
 
     @Override

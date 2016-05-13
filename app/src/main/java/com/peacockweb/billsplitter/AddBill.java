@@ -11,21 +11,26 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.ListPopupWindow;
+import android.widget.ListView;
+
+import com.peacockweb.billsplitter.util.TinyDB;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddBill extends AppCompatActivity
-implements AdapterView.OnItemClickListener {
+public class AddBill extends AppCompatActivity {
 
-    ArrayList<String> addedFriends;
-    AutoCompleteTextView billMembers;
-    ListPopupWindow friendsDialog;
-    ArrayAdapter<GroupMember> adapter;
+    EditText payerText;
+    EditText recipients;
+    EditText total;
+    EditText description;
+    EditText date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,36 +41,63 @@ implements AdapterView.OnItemClickListener {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        billMembers = (AutoCompleteTextView) findViewById(R.id.billAddPersonText);
-        billMembers.setAdapter(adapter);
+        TinyDB tinyDb = new TinyDB(this);
 
-        billMembers.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                Fragment prev = getFragmentManager().findFragmentByTag("dialog");
-                if (prev != null) {
-                    ft.remove(prev);
-                }
-                ft.addToBackStack(null);
+        payerText = (EditText) findViewById(R.id.mainPayer);
 
-                // Create and show the dialog.
-                AddFriendsDialog newFragment = new AddFriendsDialog();
-                newFragment.show(ft, "dialog");
-            }
-        });
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view,
-                            int position, long id) {
-        for (int i = 0; i < addedFriends.size(); i++) {
-            billMembers.append(addedFriends.get(i));
-            if (i != addedFriends.size() - 1) {
-                billMembers.append(", ");
+        ArrayList groupMembers;
+        ArrayList<String> recipients = new ArrayList<>();
+        if (tinyDb.getObject("currentGroup", Group.class) != null) {
+            Group currentGroup = (Group) tinyDb.getObject("currentGroup", Group.class);
+            groupMembers = currentGroup.groupMembers;
+            for (Object mem : groupMembers) {
+                recipients.add(((GroupMember)mem).getName());
             }
         }
-        friendsDialog.dismiss();
+
+        total = (EditText) findViewById(R.id.billTotal);
+        description = (EditText) findViewById(R.id.billDescription);
+        date = (EditText) findViewById(R.id.dateInput);
+
+
+
+        ArrayList<GroupMember> payers = new ArrayList<>();
+        if (tinyDb.getObject("currentGroup", Group.class) != null) {
+            Group currentGroup = (Group) tinyDb.getObject("currentGroup", Group.class);
+            payers = currentGroup.groupMembers;
+        }
+
+        PayerListAdapter adapter = new PayerListAdapter(this, payers);
+        ListView listView1 = (ListView) findViewById(R.id.billPayerList);
+        listView1.setAdapter(adapter);
+        listView1.setOnItemClickListener(mMessageClickedHandler);
+
+        int numberOfItems = adapter.getCount();
+
+        // Get total height of all items.
+        int totalItemsHeight = 0;
+        for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+            View item = adapter.getView(itemPos, null, listView1);
+            item.measure(0, 0);
+            totalItemsHeight += item.getMeasuredHeight();
+        }
+
+        // Get total height of all item dividers.
+        int totalDividersHeight = listView1.getDividerHeight() *
+                (numberOfItems - 1);
+
+        // Set list height.
+        ViewGroup.LayoutParams params = listView1.getLayoutParams();
+        params.height = totalItemsHeight + totalDividersHeight;
+        listView1.setLayoutParams(params);
+        listView1.requestLayout();
     }
+
+    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView parent, View v, int position, long id) {
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,9 +110,7 @@ implements AdapterView.OnItemClickListener {
         int id = item.getItemId();
         if (id == R.id.action_favorite)
         {
-            Snackbar.make(findViewById(R.id.editText), "Successfully created bill!", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show();
+
         }
 
         if (id == R.id.action_settings) {

@@ -26,11 +26,11 @@ public class FriendFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+        /*ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
                 android.R.layout.simple_list_item_1, myStringArray);
         ListView listView1 = (ListView) view.findViewById(R.id.friendsList);
         listView1.setAdapter(adapter);
-        listView1.setOnItemClickListener(mMessageClickedHandler);
+        listView1.setOnItemClickListener(mMessageClickedHandler);*/
     }
 
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {

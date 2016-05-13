@@ -63,11 +63,7 @@ public class ManageGroups extends AppCompatActivity {
 
         if (id == R.id.action_favorite)
         {
-/*            Intent intent = new Intent(getApplicationContext(), HomePage.class);
-            startActivity(intent);*/
-            Snackbar.make(findViewById(R.id.editText5), "Successfully created bill!", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null)
-                    .show();
+
         }
 
         //noinspection SimplifiableIfStatement
