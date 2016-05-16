@@ -144,7 +144,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                                             }
                                         });
                                     }
-                                    Group group = new Group(addedMembers, groupName.getText().toString());
+                                    Group group = new Group(addedMembers, groupName.getText().toString(), groupId);
                                     ArrayList temp = tinyDB.getListObject("groupList", Group.class);
                                     temp.add(group);
                                     tinyDB.putListObject("groupList", temp);

@@ -8,8 +8,10 @@ import java.util.ArrayList;
 public class Group {
     ArrayList<GroupMember> groupMembers;
     String name;
+    String groupId;
 
-    public Group(ArrayList<GroupMember> members, String name) {
+    public Group(ArrayList<GroupMember> members, String name, String groupId) {
+        this.groupId = groupId;
         groupMembers = members;
         this.name = name;
     }
@@ -25,5 +27,16 @@ public class Group {
             }
         }
         return str;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof Group)) return false;
+        Group otherGroup = (Group) other;
+        if (!otherGroup.groupId.equals(groupId)) return false;
+
+        return true;
     }
 }

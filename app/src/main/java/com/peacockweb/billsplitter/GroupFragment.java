@@ -64,6 +64,9 @@ public class GroupFragment extends Fragment {
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
             tinyDB.putObject("currentGroup", group);
+            ParseObject user = SignIn.user;
+            user.put("currentGroup", group.groupId);
+            user.saveInBackground();
         }
     };
 

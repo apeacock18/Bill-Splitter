@@ -24,7 +24,11 @@
         android:gravity="center_vertical"
         android:text="Paid to"
         android:textSize="14sp"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/summaryItemDate"
+        android:layout_toStartOf="@+id/summaryItemDate"
+        android:ellipsize="end"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/summaryItemDescription"
@@ -40,13 +44,14 @@
         android:layout_marginBottom="5dp" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:id="@+id/summaryItemDate"
         android:layout_alignBottom="@+id/summaryItemPayer"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:text="5/2/2016 10:55 AM" />
+        android:text="5/2/2016 10:55 AM"
+        android:gravity="right" />
 
 </RelativeLayout> 

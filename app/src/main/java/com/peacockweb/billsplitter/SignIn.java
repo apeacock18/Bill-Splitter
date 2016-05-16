@@ -37,7 +37,7 @@ import java.util.List;
 
 public class SignIn extends AppCompatActivity {
 
-    ParseObject user;
+    public static ParseObject user;
     TinyDB tinyDB;
     ArrayList<String> knownUserUsernames;
 
@@ -150,7 +150,7 @@ public class SignIn extends AppCompatActivity {
                                                                         mems.add(new GroupMember(parseUser.getString("name"), parseUser.getString("username"), parseUser.getObjectId()));
                                                                     }
                                                                 }
-                                                                groups.add(new Group(mems, parseGroup.getString("name")));
+                                                                groups.add(new Group(mems, parseGroup.getString("name"), parseGroup.getObjectId()));
                                                             }
 
                                                             for (ParseObject parseUser : users) {
@@ -163,6 +163,12 @@ public class SignIn extends AppCompatActivity {
 
                                                             tinyDB.putListObject("groupList", groups);
                                                             tinyDB.putListObject("knownMembers", knownMembers);
+                                                            String userGroup = user.getString("currentGroup");
+                                                            for (Object g : groups) {
+                                                                if (((Group)g).groupId.equals(userGroup)) {
+                                                                    tinyDB.putObject("currentGroup", g);
+                                                                }
+                                                            }
 
                                                             Intent intent = new Intent(getApplicationContext(), HomePage.class);
                                                             finish();
@@ -256,7 +262,7 @@ public class SignIn extends AppCompatActivity {
                             for (Object str : members) {
                                 mems.add(new GroupMember(str.toString()));
                             }
-                            groups.add(new Group(mems, obj.getString("name")));
+                            groups.add(new Group(mems, obj.getString("name"), obj.getObjectId()));
                         }
                         tinyDB.putListObject("groupList", groups);
                     } else {

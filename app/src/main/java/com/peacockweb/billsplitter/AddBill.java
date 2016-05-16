@@ -1,5 +1,7 @@
 package com.peacockweb.billsplitter;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -16,24 +18,33 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListPopupWindow;
 import android.widget.ListView;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.peacockweb.billsplitter.util.TinyDB;
 
+import java.io.Console;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AddBill extends AppCompatActivity {
 
-    EditText payerText;
+    Button payerText;
     EditText total;
     EditText description;
-    EditText date;
+    Button date;
     TinyDB tinyDB;
     ArrayList<GroupMember> payers;
     ArrayList<String> recipients;
+    private DatePicker datePicker;
+    private Calendar calendar;
+    private int year, month, day;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +56,17 @@ public class AddBill extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         tinyDB = new TinyDB(this);
+        payerText = (Button) findViewById(R.id.mainPayer);
+        total = (EditText) findViewById(R.id.billTotal);
+        description = (EditText) findViewById(R.id.billDescription);
+        date = (Button) findViewById(R.id.dateInput);
 
-        payerText = (EditText) findViewById(R.id.mainPayer);
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        showDate(year, month + 1, day);
 
         ArrayList groupMembers;
         recipients = new ArrayList<>();
@@ -58,12 +78,6 @@ public class AddBill extends AppCompatActivity {
             }
         }
 
-        total = (EditText) findViewById(R.id.billTotal);
-        description = (EditText) findViewById(R.id.billDescription);
-        date = (EditText) findViewById(R.id.dateInput);
-
-
-
         payers = new ArrayList<>();
         if (tinyDB.getObject("currentGroup", Group.class) != null) {
             Group currentGroup = (Group) tinyDB.getObject("currentGroup", Group.class);
@@ -74,6 +88,7 @@ public class AddBill extends AppCompatActivity {
         ListView listView1 = (ListView) findViewById(R.id.billPayerList);
         listView1.setAdapter(adapter);
         listView1.setOnItemClickListener(mMessageClickedHandler);
+        listView1.setScrollContainer(false);
 
         int numberOfItems = adapter.getCount();
 
@@ -101,6 +116,38 @@ public class AddBill extends AppCompatActivity {
 
         }
     };
+
+    @SuppressWarnings("deprecation")
+    public void setDate(View view) {
+        showDialog(999);
+        Toast.makeText(getApplicationContext(), "ca", Toast.LENGTH_SHORT)
+                .show();
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // TODO Auto-generated method stub
+        if (id == 999) {
+            return new DatePickerDialog(this, myDateListener, year, month, day);
+        }
+        return null;
+    }
+
+    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+            // TODO Auto-generated method stub
+            // arg1 = year
+            // arg2 = month
+            // arg3 = day
+            showDate(arg1, arg2+1, arg3);
+        }
+    };
+
+    private void showDate(int year, int month, int day) {
+        date.setText(new StringBuilder().append(month).append("/")
+                .append(day).append("/").append(year));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -167,5 +214,28 @@ public class AddBill extends AppCompatActivity {
             flag = false;
         }
         return flag;
+    }
+
+    public void payerClick(View view) {
+        PopupMenu menu = new PopupMenu(this, payerText);
+        for (GroupMember payer : payers) {
+            menu.getMenu().add(payer.getName());
+        }
+
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                payerText.setText(item.getTitle());
+                return false;
+            }
+        });
+
+        menu.show();
+    }
+
+    public void showDatePicker(View view) {
+        showDialog(999);
+        Toast.makeText(getApplicationContext(), "ca", Toast.LENGTH_SHORT)
+                .show();
     }
 }
