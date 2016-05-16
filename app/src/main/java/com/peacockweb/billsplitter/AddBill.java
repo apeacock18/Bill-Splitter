@@ -2,6 +2,7 @@ package com.peacockweb.billsplitter;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
@@ -27,10 +28,12 @@ import java.util.List;
 public class AddBill extends AppCompatActivity {
 
     EditText payerText;
-    EditText recipients;
     EditText total;
     EditText description;
     EditText date;
+    TinyDB tinyDB;
+    ArrayList<GroupMember> payers;
+    ArrayList<String> recipients;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +44,14 @@ public class AddBill extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        TinyDB tinyDb = new TinyDB(this);
+        tinyDB = new TinyDB(this);
 
         payerText = (EditText) findViewById(R.id.mainPayer);
 
         ArrayList groupMembers;
-        ArrayList<String> recipients = new ArrayList<>();
-        if (tinyDb.getObject("currentGroup", Group.class) != null) {
-            Group currentGroup = (Group) tinyDb.getObject("currentGroup", Group.class);
+        recipients = new ArrayList<>();
+        if (tinyDB.getObject("currentGroup", Group.class) != null) {
+            Group currentGroup = (Group) tinyDB.getObject("currentGroup", Group.class);
             groupMembers = currentGroup.groupMembers;
             for (Object mem : groupMembers) {
                 recipients.add(((GroupMember)mem).getName());
@@ -61,9 +64,9 @@ public class AddBill extends AppCompatActivity {
 
 
 
-        ArrayList<GroupMember> payers = new ArrayList<>();
-        if (tinyDb.getObject("currentGroup", Group.class) != null) {
-            Group currentGroup = (Group) tinyDb.getObject("currentGroup", Group.class);
+        payers = new ArrayList<>();
+        if (tinyDB.getObject("currentGroup", Group.class) != null) {
+            Group currentGroup = (Group) tinyDB.getObject("currentGroup", Group.class);
             payers = currentGroup.groupMembers;
         }
 
@@ -110,7 +113,30 @@ public class AddBill extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_favorite)
         {
+            PaymentSummary summary = new PaymentSummary(
+                payerText.getText().toString(),
+                description.getText().toString(),
+                date.getText().toString(),
+                recipients.toArray(new String[recipients.size()]),
+                Double.parseDouble(total.getText().toString()),
+                false
+            );
 
+            SummaryFragment.adapter.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
+            SummaryFragment.adapter.notifyDataSetChanged();
+
+            if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
+                ArrayList paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
+                paymentSummaries.add(summary);
+                tinyDB.putListObject("paymentSummaries", paymentSummaries);
+            }
+            else {
+                ArrayList paymentSummaries = new ArrayList();
+                paymentSummaries.add(summary);
+                tinyDB.putListObject("paymentSummaries", paymentSummaries);
+            }
+            Intent intent = new Intent(getBaseContext(), HomePage.class);
+            startActivity(intent);
         }
 
         if (id == R.id.action_settings) {

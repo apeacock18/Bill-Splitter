@@ -117,8 +117,6 @@ public class SignUp extends AppCompatActivity {
 
     public void signUpDone(View view) {
         if (FieldsAreValid()) {
-            String str = fullName.getText().toString();
-            String[] splited = str.split("\\s+");
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = prefs.edit();
@@ -126,8 +124,7 @@ public class SignUp extends AppCompatActivity {
             editor.commit();
 
             HashMap<String, String> params = new HashMap<>();
-            params.put("fName", splited[0]);
-            params.put("lName", splited[1]);
+            params.put("name", fullName.getText().toString());
             params.put("email", email.getText().toString());
             params.put("phoneNumber", phone.getText().toString());
             params.put("username", username.getText().toString());

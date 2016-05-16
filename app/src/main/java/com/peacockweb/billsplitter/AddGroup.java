@@ -112,8 +112,8 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         groupId = id;
                         usernames = new ArrayList();
 
-                        for (GroupMember gm : addedMembers) {
-                            usernames.add(gm.getUsername());
+                        for (GroupMember groupMember : addedMembers) {
+                            usernames.add(groupMember.getUsername());
                         }
 
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");

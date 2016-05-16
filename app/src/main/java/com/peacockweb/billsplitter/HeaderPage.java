@@ -28,19 +28,6 @@ public class HeaderPage extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this).setIcon(android.R.drawable.ic_dialog_alert).setTitle("Exit")
-                .setMessage("Are you sure you want to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                        System.exit(0);
-                    }
-                }).setNegativeButton("No", null).show();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_header_page, menu);
