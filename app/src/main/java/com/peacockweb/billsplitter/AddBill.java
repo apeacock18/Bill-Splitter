@@ -26,11 +26,19 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.GetCallback;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.peacockweb.billsplitter.util.TinyDB;
 
 import java.io.Console;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class AddBill extends AppCompatActivity {
@@ -177,14 +185,39 @@ public class AddBill extends AppCompatActivity {
                 ArrayList paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
                 paymentSummaries.add(summary);
                 tinyDB.putListObject("paymentSummaries", paymentSummaries);
-/*            }
-            else {
-                ArrayList paymentSummaries = new ArrayList();
-                paymentSummaries.add(summary);
-                tinyDB.putListObject("paymentSummaries", paymentSummaries);
-            }*/
-                Intent intent = new Intent(getBaseContext(), HomePage.class);
-                startActivity(intent);
+
+                final Group group = (Group) tinyDB.getObject("currentGroup", Group.class);
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
+                query.getInBackground(group.groupId, new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject group, ParseException e) {;
+                        HashMap<String, Object> params = new HashMap<>();
+                        params.put("groupId", group.getObjectId());
+                        params.put("payee", SignIn.user.getObjectId());
+                        HashMap split = new HashMap();
+                        List memberIds = group.getList("members");
+                        for (int i = 0; i < memberIds.size(); i++) {
+                            split.put(memberIds.get(i), 100 / memberIds.size());
+                        }
+                        params.put("split", split);
+                        params.put("transactionAmount", Double.parseDouble(total.getText().toString()));
+                        params.put("description", description.getText().toString());
+                        params.put("date", date.getText().toString());
+                        ParseCloud.callFunctionInBackground("newTransaction", params, new FunctionCallback<Object>() {
+                            public void done(Object id, ParseException e) {
+                                if (e == null) {
+                                    System.out.println("Transaction was added to parse.");
+                                    Intent intent = new Intent(getBaseContext(), HomePage.class);
+                                    startActivity(intent);
+                                } else {
+                                    System.out.println("Error: " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                                //System.out.println("GOT TO HERE!");
+                            }
+                        });
+                    }
+                });
             }
         }
 
