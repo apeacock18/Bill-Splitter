@@ -39,9 +39,19 @@ public class GroupFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
         tinyDB = new TinyDB(getContext());
         groupsData = tinyDB.getListObject("groupList", Group.class);
         groupAdapter = new GroupListAdapter(getContext(), groupsData);
+        Button currentGroup = (Button) getActivity().findViewById(R.id.currentGroupButton);
+        if (tinyDB.getObject("currentGroup", Group.class) != null) {
+            Group group = (Group) tinyDB.getObject("currentGroup", Group.class);
+            currentGroup.setText(group.name);
+        }
+        else if (!groupsData.isEmpty()) {
+            tinyDB.putObject("currentGroup", groupsData.get(0));
+            currentGroup.setText(((Group)groupsData.get(0)).name);
+        }
 
         ListView listView1 = (ListView) view.findViewById(R.id.groupsList);
         listView1.setAdapter(groupAdapter);

@@ -113,30 +113,32 @@ public class AddBill extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_favorite)
         {
-            PaymentSummary summary = new PaymentSummary(
-                payerText.getText().toString(),
-                description.getText().toString(),
-                date.getText().toString(),
-                recipients.toArray(new String[recipients.size()]),
-                Double.parseDouble(total.getText().toString()),
-                false
-            );
+            if (fieldsAreValid()) {
+                PaymentSummary summary = new PaymentSummary(
+                        payerText.getText().toString(),
+                        description.getText().toString(),
+                        date.getText().toString(),
+                        recipients.toArray(new String[recipients.size()]),
+                        Double.parseDouble(total.getText().toString()),
+                        false
+                );
 
-            SummaryFragment.adapter.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
-            SummaryFragment.adapter.notifyDataSetChanged();
+                SummaryFragment.paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
+                SummaryFragment.adapter.notifyDataSetChanged();
 
-            if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
+                //if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
                 ArrayList paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
                 paymentSummaries.add(summary);
                 tinyDB.putListObject("paymentSummaries", paymentSummaries);
-            }
+/*            }
             else {
                 ArrayList paymentSummaries = new ArrayList();
                 paymentSummaries.add(summary);
                 tinyDB.putListObject("paymentSummaries", paymentSummaries);
+            }*/
+                Intent intent = new Intent(getBaseContext(), HomePage.class);
+                startActivity(intent);
             }
-            Intent intent = new Intent(getBaseContext(), HomePage.class);
-            startActivity(intent);
         }
 
         if (id == R.id.action_settings) {
@@ -144,5 +146,26 @@ public class AddBill extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean fieldsAreValid() {
+        boolean flag = true;
+        if (total.getText().toString().equals(null) || total.getText().toString().equals("")) {
+            total.setError("Need enter an amount");
+            flag = false;
+        }
+        if (payerText.getText().toString().equals(null) || payerText.getText().toString().equals("")) {
+            payerText.setError("Need to enter a payer");
+            flag = false;
+        }
+        if (description.getText().toString().equals(null) || description.getText().toString().equals("")) {
+            description.setError("Need to enter a description");
+            flag = false;
+        }
+        if (date.getText().toString().equals(null) || date.getText().toString().equals("")) {
+            date.setError("Need to enter a date");
+            flag = false;
+        }
+        return flag;
     }
 }

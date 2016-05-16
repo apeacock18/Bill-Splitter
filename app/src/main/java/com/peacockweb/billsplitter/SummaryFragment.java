@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class SummaryFragment extends Fragment {
 
-    public static ArrayList<PaymentSummary> paymentSummaries;
+    public static ArrayList paymentSummaries;
     public  static PaymentsListAdapter adapter;
     TinyDB tinyDB;
     private View view;
@@ -45,10 +45,13 @@ public class SummaryFragment extends Fragment {
         paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
         paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));*/
 
-        paymentSummaries = new ArrayList();
+        /*paymentSummaries = new ArrayList();
         paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
         paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
+        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));*/
+
+        tinyDB= new TinyDB(getContext());
+        paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
 
 /*        if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
             paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
