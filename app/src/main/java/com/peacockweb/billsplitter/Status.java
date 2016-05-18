@@ -1,3 +1,5 @@
+package com.peacockweb.billsplitter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

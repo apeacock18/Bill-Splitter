@@ -1,12 +1,6 @@
 package com.peacockweb.billsplitter;
 
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,33 +8,64 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ListView;
+
+import com.parse.ParseObject;
+import com.peacockweb.billsplitter.util.TinyDB;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ManageGroups extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private TabLayout tabLayout;
-    private ViewPager viewPager;
+    public static ArrayList groupsData;
+    public static GroupListAdapter groupAdapter;
+    TinyDB tinyDB;
+    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friends);
+        setContentView(R.layout.activity_manage_groups);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
-
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
+        tinyDB = new TinyDB(this);
+        groupsData = tinyDB.getListObject("groupList", Group.class);
+        groupAdapter = new GroupListAdapter(this, groupsData);
+        Button currentGroup = (Button) findViewById(R.id.currentGroupButton);
+        if (tinyDB.getObject("currentGroup", Group.class) != null) {
+            Group group = (Group) tinyDB.getObject("currentGroup", Group.class);
+            currentGroup.setText(group.name);
+        }
+        else if (!groupsData.isEmpty()) {
+            tinyDB.putObject("currentGroup", groupsData.get(0));
+            currentGroup.setText(((Group)groupsData.get(0)).name);
+        }
+
+        ListView listView1 = (ListView) findViewById(R.id.groupsList);
+        listView1.setAdapter(groupAdapter);
+        listView1.setOnItemClickListener(mMessageClickedHandler);
     }
+
+    private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
+        public void onItemClick(AdapterView parent, View v, int position, long id) {
+            Button currentGroup = (Button) findViewById(R.id.currentGroupButton);
+            Group group = (Group) groupsData.get(position);
+            currentGroup.setText(group.name);
+            tinyDB.putObject("currentGroup", group);
+            ParseObject user = SignIn.user;
+            user.put("currentGroup", group.groupId);
+            user.saveInBackground();
+            tinyDB.putListObject("paymentSummaries", new ArrayList());
+        }
+    };
 
     public void onAddGroupClick(View view) {
         Intent intent = new Intent(this, AddGroup.class);
@@ -74,39 +99,4 @@ public class ManageGroups extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new GroupFragment(), "Groups");
-        adapter.addFragment(new FriendFragment(), "_Friends");
-        viewPager.setAdapter(adapter);
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-    }
 }

@@ -194,10 +194,11 @@ public class AddBill extends AppCompatActivity {
                         HashMap split = new HashMap();
                         List memberIds = group.getList("members");
                         for (int i = 0; i < memberIds.size(); i++) {
-                            split.put(memberIds.get(i), 100 / memberIds.size());
+                            double num = 1.000000 / memberIds.size();
+                            split.put(memberIds.get(i), num);
                         }
                         params.put("split", split);
-                        params.put("transactionAmount", Double.parseDouble(total.getText().toString()));
+                        params.put("amount", Double.parseDouble(total.getText().toString()));
                         params.put("description", description.getText().toString());
                         params.put("date", date.getText().toString());
                         ParseCloud.callFunctionInBackground("newTransaction", params, new FunctionCallback<Object>() {
