@@ -153,8 +153,8 @@ public class AddBill extends AppCompatActivity {
     };
 
     private void showDate(int year, int month, int day) {
-        date.setText(new StringBuilder().append(month).append("/")
-                .append(day).append("/").append(year));
+        date.setText(new StringBuilder().append(month).append("-")
+                .append(day).append("-").append(year));
     }
 
     @Override
@@ -177,9 +177,6 @@ public class AddBill extends AppCompatActivity {
                         Double.parseDouble(total.getText().toString()),
                         false
                 );
-
-                SummaryFragment.paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
-                SummaryFragment.adapter.notifyDataSetChanged();
 
                 //if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
                 ArrayList paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);

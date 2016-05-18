@@ -128,7 +128,7 @@ public class SignUp extends AppCompatActivity {
             params.put("email", email.getText().toString());
             params.put("phoneNumber", phone.getText().toString());
             params.put("username", username.getText().toString());
-            params.put("password", get_SHA_512_SecurePassword(password.getText().toString(), ""));
+            params.put("password", get_SHA_512_SecurePassword(password.getText().toString() + username.getText().toString(), ""));
             ParseCloud.callFunctionInBackground("create", params, new FunctionCallback<String>() {
                 public void done(String id, ParseException e) {
                     if (e == null) {

@@ -16,12 +16,10 @@ import android.widget.EditText;
 
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
-import com.parse.LogInCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.peacockweb.billsplitter.util.TinyDB;
 
 import org.json.JSONArray;
@@ -97,7 +95,7 @@ public class SignIn extends AppCompatActivity {
         // Login user to Parse through cloud code
         HashMap<String, String> params = new HashMap<>();
         params.put("username", username.getText().toString());
-        params.put("password", get_SHA_512_SecurePassword(password.getText().toString(), ""));
+        params.put("password", get_SHA_512_SecurePassword(password.getText().toString() + username.getText().toString(), ""));
         ParseCloud.callFunctionInBackground("login", params, new FunctionCallback<String>() {
             public void done(String id, ParseException e) {
                 if (e == null) {
@@ -169,6 +167,23 @@ public class SignIn extends AppCompatActivity {
                                                                     tinyDB.putObject("currentGroup", g);
                                                                 }
                                                             }
+                                                          /*  for (ParseObject g : parseGroups) {
+                                                                if (g.getObjectId().equals(userGroup)) {
+                                                                    JSONArray jsonarray = g.getJSONArray("status");
+                                                                    for (int i = 0; i < jsonarray.length(); i++) {
+                                                                        try {
+                                                                            JSONObject jsonobject = jsonarray.getJSONObject(i);
+                                                                            String payee = jsonobject.getString();
+                                                                            String date = jsonobject.getString("date");
+                                                                            double amount = jsonobject.getDouble("amount");
+                                                                            String description = jsonobject.getString("description");
+                                                                        }
+                                                                        catch (JSONException ex) {
+
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }*/
 
                                                             Intent intent = new Intent(getApplicationContext(), HomePage.class);
                                                             finish();
@@ -193,24 +208,6 @@ public class SignIn extends AppCompatActivity {
                         }
                     });
 
-                    /*ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
-                    query.whereEqualTo("username", username.getText().toString());
-                    query.findInBackground(new FindCallback<ParseObject>() {
-                        public void done(List<ParseObject> list, ParseException e) {
-                            if (e == null) {
-                                user = list.get(0);
-                                tinyDB.putString("userId", user.getObjectId());
-                                initLocalSettings();
-                            } else {
-                                Log.d("user", "Error: " + e.getMessage());
-                            }
-                        }
-                    });
-                    System.out.println(id);
-                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                    finish();
-                    HeaderPage.hp.finish();
-                    startActivity(intent); */
                 } else {
                     Log.d("login", "Error: " + e.getMessage());
                     if (e.getMessage().equals("0") || e.getMessage().equals("1")) {
