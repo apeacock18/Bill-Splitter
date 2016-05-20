@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ public class GroupFragment extends Fragment {
 
     public static ArrayList groupsData;
     public static GroupListAdapter groupAdapter;
-    TinyDB tinyDB;
     private View view;
 
     public GroupFragment() {}
@@ -33,24 +33,15 @@ public class GroupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-
-        tinyDB = new TinyDB(getContext());
-        groupsData = tinyDB.getListObject("groupList", Group.class);
+        groupsData = VariableManager.groups;
+        System.out.println(groupsData.size() + " groups contained in adapter");
+        Log.d("MyApp", " groups contained in adapter");
         groupAdapter = new GroupListAdapter(getContext(), groupsData);
         Button currentGroup = (Button) getActivity().findViewById(R.id.currentGroupButton);
-        if (tinyDB.getObject("currentGroup", Group.class) != null) {
-            Group group = (Group) tinyDB.getObject("currentGroup", Group.class);
-            currentGroup.setText(group.name);
-        }
-        else if (!groupsData.isEmpty()) {
-            tinyDB.putObject("currentGroup", groupsData.get(0));
-            currentGroup.setText(((Group)groupsData.get(0)).name);
+
+        if (VariableManager.currentGroup != null) {
+            currentGroup.setText(VariableManager.currentGroup.name);
         }
 
         ListView listView1 = (ListView) view.findViewById(R.id.groupsList);
@@ -58,15 +49,22 @@ public class GroupFragment extends Fragment {
         listView1.setOnItemClickListener(mMessageClickedHandler);
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+    }
+
     private AdapterView.OnItemClickListener mMessageClickedHandler = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView parent, View v, int position, long id) {
             Button currentGroup = (Button) getActivity().findViewById(R.id.currentGroupButton);
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
-            tinyDB.putObject("currentGroup", group);
-            ParseObject user = SignIn.user;
+            VariableManager.currentGroup = group;
+            ParseObject user = VariableManager.user;
             user.put("currentGroup", group.groupId);
             user.saveInBackground();
+            System.out.println(groupsData.size() + " groups contained in adapter");
         }
     };
 

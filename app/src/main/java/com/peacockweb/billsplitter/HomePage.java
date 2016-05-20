@@ -37,7 +37,7 @@ public class HomePage extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new SummaryFragment(), "Summary");
-        adapter.addFragment(new SummaryFragment(), "Debts");
+        adapter.addFragment(new DebtsFragment(), "Debts");
         viewPager.setAdapter(adapter);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -47,7 +47,7 @@ public class HomePage extends AppCompatActivity {
         paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
         paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
 
-        PaymentsListAdapter adapter = new PaymentsListAdapter(this, paymentSummaries);
+        TransactionsListAdapter adapter = new TransactionsListAdapter(this, paymentSummaries);
         ListView listView = (ListView) findViewById(R.id.main_bill_list);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(mMessageClickedHandler);*/

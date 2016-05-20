@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class PaymentsListAdapter extends ArrayAdapter {
+public class TransactionsListAdapter extends ArrayAdapter {
     private final Context context;
-    private final ArrayList<PaymentSummary> values;
+    private final ArrayList<Transaction> values;
 
-    public PaymentsListAdapter(Context context, ArrayList<PaymentSummary> values) {
+    public TransactionsListAdapter(Context context, ArrayList<Transaction> values) {
         super(context, -1, values);
         this.context = context;
         this.values = values;
@@ -33,7 +33,7 @@ public class PaymentsListAdapter extends ArrayAdapter {
         TextView date = (TextView) rowView.findViewById(R.id.summaryItemDate);
 
         payer.setText(values.get(position).getPayerStatement());
-        description.setText(values.get(position).description);
+        description.setText(values.get(position).desc);
         recipients.setText(values.get(position).getRecipientsStatement());
         date.setText(values.get(position).date);
 

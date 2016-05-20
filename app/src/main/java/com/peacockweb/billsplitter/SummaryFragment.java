@@ -10,16 +10,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.peacockweb.billsplitter.util.TinyDB;
-
 import java.util.ArrayList;
 
 
 public class SummaryFragment extends Fragment {
 
-    public static ArrayList paymentSummaries;
-    public  static PaymentsListAdapter adapter;
-    TinyDB tinyDB;
+    public static ArrayList<Transaction> transactions;
+    public  static TransactionsListAdapter adapter;
     private View view;
 
     public SummaryFragment() {}
@@ -31,33 +28,9 @@ public class SummaryFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        /*paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
-        paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));*/
+        transactions = VariableManager.currentGroup.transactions;
 
-        /*paymentSummaries = new ArrayList();
-        paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
-        paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
-        paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));*/
-
-        tinyDB= new TinyDB(getContext());
-        paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
-
-/*        if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
-            paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
-        }*/
-
-        adapter = new PaymentsListAdapter(getContext(), paymentSummaries);
+        adapter = new TransactionsListAdapter(getContext(), transactions);
         ListView summaryList = (ListView) view.findViewById(R.id.summary_list);
         summaryList.setAdapter(adapter);
         summaryList.setOnItemClickListener(mMessageClickedHandler);

@@ -39,6 +39,14 @@
                 android:value="com.peacockweb.billsplitter.HomePage" />
         </activity>
         <activity
+            android:name=".AddGroup"
+            android:label="AddGroup"
+            android:parentActivityName=".ManageGroups" >
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.peacockweb.billsplitter.ManageGroups" />
+        </activity>
+        <activity
             android:name=".ManageGroups"
             android:label="@string/title_activity_friends"
             android:parentActivityName=".HomePage" >
@@ -81,7 +89,6 @@
         <activity
             android:name=".util.PopupListWindow"
             android:label="@string/title_activity_popup_list_window" />
-        <activity android:name=".AddGroup" />
         <activity
             android:name=".ManageFriends"
             android:label="@string/title_activity_manage_friends"

@@ -330,8 +330,8 @@ public class TinyDB {
 
     
     public  Object getObject(String key, Class<?> classOfT){
-
         String json = getString(key);
+        System.out.println(json);
         Object value = new Gson().fromJson(json, classOfT);
         if (value == null)
             return value;

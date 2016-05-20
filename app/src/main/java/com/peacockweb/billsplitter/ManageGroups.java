@@ -16,14 +16,13 @@ import com.parse.ParseObject;
 import com.peacockweb.billsplitter.util.TinyDB;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ManageGroups extends AppCompatActivity {
 
     private Toolbar toolbar;
     public static ArrayList groupsData;
     public static GroupListAdapter groupAdapter;
-    TinyDB tinyDB;
-    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +35,12 @@ public class ManageGroups extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        tinyDB = new TinyDB(this);
-        groupsData = tinyDB.getListObject("groupList", Group.class);
+        groupsData = VariableManager.groups;
+        System.out.println(groupsData.size() + " groups contained in adapter");
         groupAdapter = new GroupListAdapter(this, groupsData);
         Button currentGroup = (Button) findViewById(R.id.currentGroupButton);
-        if (tinyDB.getObject("currentGroup", Group.class) != null) {
-            Group group = (Group) tinyDB.getObject("currentGroup", Group.class);
-            currentGroup.setText(group.name);
-        }
-        else if (!groupsData.isEmpty()) {
-            tinyDB.putObject("currentGroup", groupsData.get(0));
-            currentGroup.setText(((Group)groupsData.get(0)).name);
+        if (VariableManager.currentGroup != null) {
+            currentGroup.setText(VariableManager.currentGroup.name);
         }
 
         ListView listView1 = (ListView) findViewById(R.id.groupsList);
@@ -59,11 +53,18 @@ public class ManageGroups extends AppCompatActivity {
             Button currentGroup = (Button) findViewById(R.id.currentGroupButton);
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
-            tinyDB.putObject("currentGroup", group);
-            ParseObject user = SignIn.user;
+            VariableManager.currentGroup = group;
+            List members = group.groupMembers;
+            ArrayList<String> memberIds = new ArrayList<String>();
+            for (Object mem : members) {
+                if (!VariableManager.userId.equals(((GroupMember)mem).getUserId())) {
+                    memberIds.add(((GroupMember)mem).getUserId());
+                }
+            }
+            ParseObject user = VariableManager.user;
             user.put("currentGroup", group.groupId);
             user.saveInBackground();
-            tinyDB.putListObject("paymentSummaries", new ArrayList());
+            //tinyDB.putListObject("paymentSummaries", new ArrayList());
         }
     };
 

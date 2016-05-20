@@ -19,9 +19,9 @@ import java.util.List;
  */
 class PayerListAdapter extends ArrayAdapter {
     private final Context context;
-    private final ArrayList<GroupMember> values;
+    private final List<GroupMember> values;
 
-    public PayerListAdapter(Context context, ArrayList<GroupMember> values) {
+    public PayerListAdapter(Context context, List<GroupMember> values) {
         super(context, -1, values);
         this.context = context;
         this.values = values;

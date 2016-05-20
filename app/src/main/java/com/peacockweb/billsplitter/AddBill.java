@@ -47,9 +47,9 @@ public class AddBill extends AppCompatActivity {
     EditText total;
     EditText description;
     Button date;
-    TinyDB tinyDB;
-    ArrayList<GroupMember> payers;
-    ArrayList<String> recipients;
+    //TinyDB tinyDB;
+    List<GroupMember> payers;
+    List<String> recipients;
     private DatePicker datePicker;
     private Calendar calendar;
     private int year, month, day;
@@ -63,7 +63,7 @@ public class AddBill extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        tinyDB = new TinyDB(this);
+        //tinyDB = new TinyDB(this);
         payerText = (Button) findViewById(R.id.mainPayer);
         total = (EditText) findViewById(R.id.billTotal);
         description = (EditText) findViewById(R.id.billDescription);
@@ -76,10 +76,10 @@ public class AddBill extends AppCompatActivity {
         day = calendar.get(Calendar.DAY_OF_MONTH);
         showDate(year, month + 1, day);
 
-        ArrayList groupMembers;
+        List groupMembers;
         recipients = new ArrayList<>();
-        if (tinyDB.getObject("currentGroup", Group.class) != null) {
-            Group currentGroup = (Group) tinyDB.getObject("currentGroup", Group.class);
+        if (VariableManager.currentGroup != null) {
+            Group currentGroup = VariableManager.currentGroup;
             groupMembers = currentGroup.groupMembers;
             for (Object mem : groupMembers) {
                 recipients.add(((GroupMember)mem).getName());
@@ -87,8 +87,8 @@ public class AddBill extends AppCompatActivity {
         }
 
         payers = new ArrayList<>();
-        if (tinyDB.getObject("currentGroup", Group.class) != null) {
-            Group currentGroup = (Group) tinyDB.getObject("currentGroup", Group.class);
+        if (VariableManager.currentGroup != null) {
+            Group currentGroup = VariableManager.currentGroup;
             payers = currentGroup.groupMembers;
         }
 
@@ -169,32 +169,21 @@ public class AddBill extends AppCompatActivity {
         if (id == R.id.action_favorite)
         {
             if (fieldsAreValid()) {
-                PaymentSummary summary = new PaymentSummary(
-                        payerText.getText().toString(),
-                        description.getText().toString(),
-                        date.getText().toString(),
-                        recipients.toArray(new String[recipients.size()]),
-                        Double.parseDouble(total.getText().toString()),
-                        false
-                );
 
-                //if (tinyDB.getListObject("paymentSummaries", PaymentSummary.class) != null) {
-                ArrayList paymentSummaries = tinyDB.getListObject("paymentSummaries", PaymentSummary.class);
-                paymentSummaries.add(summary);
-                tinyDB.putListObject("paymentSummaries", paymentSummaries);
-
-                final Group group = (Group) tinyDB.getObject("currentGroup", Group.class);
+                System.out.println("Name: " + payerText.getText().toString());
+                System.out.println("ObjectID: " + VariableManager.getObjectIDFromName(payerText.getText().toString()));
+                final Group group = VariableManager.currentGroup;
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
                 query.getInBackground(group.groupId, new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject group, ParseException e) {;
                         HashMap<String, Object> params = new HashMap<>();
-                        params.put("groupId", group.getObjectId());
-                        params.put("payee", SignIn.user.getObjectId());
+                        params.put("groupId", VariableManager.currentGroup.groupId);
+                        params.put("payee", VariableManager.getObjectIDFromName(payerText.getText().toString()));
                         HashMap split = new HashMap();
                         List memberIds = group.getList("members");
                         for (int i = 0; i < memberIds.size(); i++) {
-                            double num = 1.000000 / memberIds.size();
+                            double num = 1 / new Double(memberIds.size());
                             split.put(memberIds.get(i), num);
                         }
                         params.put("split", split);
@@ -205,6 +194,8 @@ public class AddBill extends AppCompatActivity {
                             public void done(Object id, ParseException e) {
                                 if (e == null) {
                                     System.out.println("Transaction was added to parse.");
+                                    VariableManager.currentGroup.updateStatuses();
+                                    VariableManager.currentGroup.updateTransactions();
                                     Intent intent = new Intent(getBaseContext(), HomePage.class);
                                     startActivity(intent);
                                 } else {

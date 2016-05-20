@@ -28,5 +28,5 @@ dependencies {
     compile 'com.parse.bolts:bolts-android:1.+'
     compile 'com.parse:parse-android:1.13.0'
     compile "com.splitwise:tokenautocomplete:2.0.7@aar"
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.google.code.gson:gson:2.2.4'
 }

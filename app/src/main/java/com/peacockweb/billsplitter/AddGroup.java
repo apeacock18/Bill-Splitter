@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,11 +49,17 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     TinyDB tinyDB;
     String groupId;
     ArrayList<String> usernames;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group);
+        toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
         dialog = new AddGroupMemberDialog();
         manager = getSupportFragmentManager();
@@ -136,11 +144,13 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                                             public void groupMemberAddedComplete(Exception e) {
                                                 if (e == null) {
                                                     Group group = new Group(addedMembers, groupName.getText().toString(), groupId);
-                                                    ArrayList temp = tinyDB.getListObject("groupList", Group.class);
+                                                    VariableManager.groups.add(group);
+                                                    ManageGroups.groupAdapter.notifyDataSetChanged();
+                                                    /*ArrayList temp = tinyDB.getListObject("groupList", Group.class);
                                                     temp.add(group);
                                                     tinyDB.putListObject("groupList", temp);
                                                     ArrayList arr = tinyDB.getListObject("groupList", Group.class);
-                                                    System.out.println(((Group) arr.get(0)).name + " found!");
+                                                    System.out.println(((Group) arr.get(0)).name + " found!");*/
                                                     finish();
                                                 }
                                             }

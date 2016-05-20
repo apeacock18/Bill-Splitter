@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -35,16 +36,16 @@ import java.util.List;
 
 public class SignIn extends AppCompatActivity {
 
-    public static ParseObject user;
+    public static Group currentGroup;
     TinyDB tinyDB;
-    ArrayList<String> knownUserUsernames;
+    //ArrayList<String> knownUserUsernames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
         tinyDB = new TinyDB(this);
-        knownUserUsernames = new ArrayList();
+        //knownUserUsernames = new ArrayList();
     }
 
     @Override
@@ -100,7 +101,7 @@ public class SignIn extends AppCompatActivity {
             public void done(String id, ParseException e) {
                 if (e == null) {
                     // Run if user login is successful
-                    tinyDB.putString("userId", id);
+                    //tinyDB.putString("userId", id);
 
                     // Pull the current Parse user
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
@@ -108,10 +109,15 @@ public class SignIn extends AppCompatActivity {
                     query.findInBackground(new FindCallback<ParseObject>() {
                         public void done(List<ParseObject> list, ParseException e) {
                             if (e == null) {
-                                user = list.get(0);;
+                                final ParseObject user = list.get(0);
+                                VariableManager.user = list.get(0);
+
+                                VariableManager.userId = user.getObjectId();
+                                VariableManager.username = user.getString("username");
+                                VariableManager.name = user.getString("name");
+
                                 // Query Parse to store local group data
                                 if (user.getList("groups") != null) {
-                                    final ArrayList groups = new ArrayList<>();
                                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
                                     // Pull all groups owned by current user
                                     query.whereContainedIn("objectId", user.getList("groups"));
@@ -119,21 +125,22 @@ public class SignIn extends AppCompatActivity {
                                         public void done(List<ParseObject> list, ParseException e) {
                                             if (e == null) {
                                                 final List<ParseObject> parseGroups = list;
-                                                // Cycle through each of user's groups
-                                                for (ParseObject obj : list) {
-                                                    // Pull all members from each group
-                                                    List members = obj.getList("members");
-                                                    for (Object str : members) {
-                                                        // Add each userId to "known users"
-                                                        if (!knownUserUsernames.contains(str.toString())) {
-                                                            knownUserUsernames.add(str.toString());
+
+                                                // Get list of all needed user ids before pulling from parse
+                                                ArrayList<String> userIds = new ArrayList();
+                                                for (ParseObject g : parseGroups) {
+                                                    List<String> mems = g.getList("members");
+                                                    for (String memberId : mems) {
+                                                        if (!userIds.contains(memberId)) {
+                                                            userIds.add(memberId);
+                                                            System.out.println(memberId);
                                                         }
                                                     }
                                                 }
 
                                                 // Pull all known user objects from parse
                                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
-                                                query.whereContainedIn("objectId", knownUserUsernames);
+                                                query.whereContainedIn("objectId", userIds);
                                                 query.findInBackground(new FindCallback<ParseObject>() {
                                                     public void done(List<ParseObject> users, ParseException e) {
                                                         if (e == null) {
@@ -148,7 +155,23 @@ public class SignIn extends AppCompatActivity {
                                                                         mems.add(new GroupMember(parseUser.getString("name"), parseUser.getString("username"), parseUser.getObjectId()));
                                                                     }
                                                                 }
-                                                                groups.add(new Group(mems, parseGroup.getString("name"), parseGroup.getObjectId()));
+                                                                ArrayList<Status> statusObjects = new ArrayList();
+                                                                List<String> parseStatuses = parseGroup.getList("status");
+                                                                ArrayList<Transaction> transactionObjects = new ArrayList();
+                                                                List<String> parseTransactions = parseGroup.getList("transactions");
+                                                                try {
+                                                                    for (String json : parseStatuses) {
+                                                                        statusObjects.add(new Status(json));
+                                                                    }
+                                                                    for (String json : parseTransactions) {
+                                                                        transactionObjects.add(new Transaction(json));
+                                                                    }
+                                                                    groups.add(new Group(mems, parseGroup.getString("name"), parseGroup.getObjectId(), new ArrayList(statusObjects), new ArrayList(transactionObjects)));
+                                                                    System.out.println("Group \"" + parseGroup.getString("name") + "\" added.");
+                                                                }
+                                                                catch (JSONException exception) {
+                                                                    exception.printStackTrace();
+                                                                }
                                                             }
 
                                                             for (ParseObject parseUser : users) {
@@ -159,31 +182,29 @@ public class SignIn extends AppCompatActivity {
                                                                 ));
                                                             }
 
+                                                            VariableManager.groups = groups;
+                                                            VariableManager.users = knownMembers;
+
                                                             tinyDB.putListObject("groupList", groups);
                                                             tinyDB.putListObject("knownMembers", knownMembers);
+                                                            tinyDB.putListObject("groupList", new ArrayList());
                                                             String userGroup = user.getString("currentGroup");
                                                             for (Object g : groups) {
                                                                 if (((Group)g).groupId.equals(userGroup)) {
+                                                                    currentGroup = (Group) g;
+                                                                    VariableManager.currentGroup = (Group) g;
                                                                     tinyDB.putObject("currentGroup", g);
-                                                                }
-                                                            }
-                                                          /*  for (ParseObject g : parseGroups) {
-                                                                if (g.getObjectId().equals(userGroup)) {
-                                                                    JSONArray jsonarray = g.getJSONArray("status");
-                                                                    for (int i = 0; i < jsonarray.length(); i++) {
-                                                                        try {
-                                                                            JSONObject jsonobject = jsonarray.getJSONObject(i);
-                                                                            String payee = jsonobject.getString();
-                                                                            String date = jsonobject.getString("date");
-                                                                            double amount = jsonobject.getDouble("amount");
-                                                                            String description = jsonobject.getString("description");
-                                                                        }
-                                                                        catch (JSONException ex) {
-
+                                                                    System.out.println("WE GOT HERE BOYS!!!!!!");
+                                                                    List members = ((Group) g).groupMembers;
+                                                                    ArrayList<String> memberIds = new ArrayList<String>();
+                                                                    for (Object mem : members) {
+                                                                        if (!user.getObjectId().equals(((GroupMember)mem).getUserId())) {
+                                                                            memberIds.add(((GroupMember)mem).getUserId());
                                                                         }
                                                                     }
+                                                                    tinyDB.putListString("membersIds", memberIds);
                                                                 }
-                                                            }*/
+                                                            }
 
                                                             Intent intent = new Intent(getApplicationContext(), HomePage.class);
                                                             finish();
@@ -239,34 +260,5 @@ public class SignIn extends AppCompatActivity {
             e.printStackTrace();
         }
         return generatedPassword;
-    }
-
-    public void initLocalSettings() {
-
-        if (user.getList("groups") != null) {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
-            query.whereContainedIn("objectId", user.getList("groups"));
-            query.findInBackground(new FindCallback<ParseObject>() {
-                public void done(List<ParseObject> list, ParseException e) {
-                    if (e == null) {
-                        if (list.isEmpty()) {
-                            System.out.println("Whoop, whoop!!! The group wasn't found!!!");
-                        }
-                        ArrayList groups = new ArrayList<>();
-                        for (ParseObject obj : list) {
-                            List members = obj.getList("members");
-                            ArrayList<GroupMember> mems = new ArrayList();
-                            for (Object str : members) {
-                                mems.add(new GroupMember(str.toString()));
-                            }
-                            groups.add(new Group(mems, obj.getString("name"), obj.getObjectId()));
-                        }
-                        tinyDB.putListObject("groupList", groups);
-                    } else {
-                        Log.d("score", "Error: " + e.getMessage());
-                    }
-                }
-            });
-        }
     }
 }

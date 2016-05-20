@@ -1,5 +1,9 @@
 package com.peacockweb.billsplitter;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,13 +16,25 @@ import java.util.List;
  */
 public class Status {
 
-    private String id = "";
-    private List<HashMap<String, Object>> data = new ArrayList<>();
+    public String id = "";
+    public ArrayList<HashMap<String, Object>> data = new ArrayList<>();
+
+    public Status() {
+        id = "";
+    }
 
     public Status(String jsonString) throws JSONException {
         JSONObject json = new JSONObject(jsonString);
+        System.out.println(jsonString);
         id = json.getString("id");
-        data = (ArrayList<HashMap<String, Object>>) json.get("data");
+        JSONArray array = json.getJSONArray("data");
+        for (int i = 0; i < array.length(); i++) {
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("recipient", array.getJSONObject(i).getString("recipient"));
+            hashMap.put("amount", array.getJSONObject(i).getDouble("amount"));
+            data.add(hashMap);
+            System.out.println(i + ": " + array.getJSONObject(i).toString());
+        }
     }
 
     public Double getAmountByRecipient(String userId) {
