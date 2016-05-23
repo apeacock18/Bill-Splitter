@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,12 @@ public class SummaryFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        transactions = VariableManager.currentGroup.transactions;
+        if (VariableManager.currentGroup != null) {
+            transactions = VariableManager.currentGroup.transactions;
+        }
+        else {
+            transactions = new ArrayList<>();
+        }
 
         adapter = new TransactionsListAdapter(getContext(), transactions);
         ListView summaryList = (ListView) view.findViewById(R.id.summary_list);

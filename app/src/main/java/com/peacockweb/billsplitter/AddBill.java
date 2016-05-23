@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -11,10 +12,13 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -36,10 +40,12 @@ import com.parse.ParseQuery;
 import com.peacockweb.billsplitter.util.TinyDB;
 
 import java.io.Console;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class AddBill extends AppCompatActivity {
 
@@ -63,7 +69,6 @@ public class AddBill extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        //tinyDB = new TinyDB(this);
         payerText = (Button) findViewById(R.id.mainPayer);
         total = (EditText) findViewById(R.id.billTotal);
         description = (EditText) findViewById(R.id.billDescription);
@@ -75,6 +80,38 @@ public class AddBill extends AppCompatActivity {
         month = calendar.get(Calendar.MONTH);
         day = calendar.get(Calendar.DAY_OF_MONTH);
         showDate(year, month + 1, day);
+
+        total.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            private String current = "";
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if(!s.toString().equals(current)){
+                    total.removeTextChangedListener(this);
+
+                    String cleanString = s.toString().replaceAll("[$,.]", "");
+
+                    double parsed = Double.parseDouble(cleanString);
+                    String formatted = NumberFormat.getCurrencyInstance().format((parsed/100));
+
+                    current = formatted;
+                    total.setText(formatted);
+                    total.setSelection(formatted.length());
+
+                    total.addTextChangedListener(this);
+                }
+            }
+        });
 
         List groupMembers;
         recipients = new ArrayList<>();
@@ -173,6 +210,7 @@ public class AddBill extends AppCompatActivity {
                 System.out.println("Name: " + payerText.getText().toString());
                 System.out.println("ObjectID: " + VariableManager.getObjectIDFromName(payerText.getText().toString()));
                 final Group group = VariableManager.currentGroup;
+                final Context context = this;
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
                 query.getInBackground(group.groupId, new GetCallback<ParseObject>() {
                     @Override
@@ -187,7 +225,15 @@ public class AddBill extends AppCompatActivity {
                             split.put(memberIds.get(i), num);
                         }
                         params.put("split", split);
-                        params.put("amount", Double.parseDouble(total.getText().toString()));
+                        try {
+                            NumberFormat format = NumberFormat.getInstance(Locale.FRANCE);
+                            Number number = format.parse(total.getText().toString().substring(1));
+                            params.put("amount", Double.parseDouble(total.getText().toString().substring(1).replaceAll("[,]", "")));
+                            System.out.println(Double.parseDouble(total.getText().toString().substring(1).replaceAll("[,]", "")));
+                        }
+                        catch (java.text.ParseException ex) {
+                            ex.printStackTrace();
+                        }
                         params.put("description", description.getText().toString());
                         params.put("date", date.getText().toString());
                         ParseCloud.callFunctionInBackground("newTransaction", params, new FunctionCallback<Object>() {
@@ -195,9 +241,7 @@ public class AddBill extends AppCompatActivity {
                                 if (e == null) {
                                     System.out.println("Transaction was added to parse.");
                                     VariableManager.currentGroup.updateStatuses();
-                                    VariableManager.currentGroup.updateTransactions();
-                                    Intent intent = new Intent(getBaseContext(), HomePage.class);
-                                    startActivity(intent);
+                                    VariableManager.currentGroup.updateTransactions(context);
                                 } else {
                                     System.out.println("Error: " + e.getMessage());
                                     e.printStackTrace();
@@ -239,6 +283,11 @@ public class AddBill extends AppCompatActivity {
     }
 
     public void payerClick(View view) {
+        View v = this.getCurrentFocus();
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
         PopupMenu menu = new PopupMenu(this, payerText);
         for (GroupMember payer : payers) {
             menu.getMenu().add(payer.getName());

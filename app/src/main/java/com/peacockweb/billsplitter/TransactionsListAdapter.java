@@ -1,6 +1,7 @@
 package com.peacockweb.billsplitter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,6 @@ public class TransactionsListAdapter extends ArrayAdapter {
         description.setText(values.get(position).desc);
         recipients.setText(values.get(position).getRecipientsStatement());
         date.setText(values.get(position).date);
-
 
         return rowView;
     }

@@ -14,7 +14,6 @@ import android.widget.ListView;
 
 public class FriendFragment extends Fragment {
 
-    String[] myStringArray = {"Friend 1", "Friend 2", "Friend 3"};
     private View view;
 
     public FriendFragment() {}

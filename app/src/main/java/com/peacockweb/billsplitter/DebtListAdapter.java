@@ -20,14 +20,11 @@ import java.util.List;
 public class DebtListAdapter extends ArrayAdapter {
     private final Context context;
     private final List<HashMap<String, Object>> data;
-    private final ArrayList<String> memberIds;
 
     public DebtListAdapter(Context context, List<HashMap<String, Object>> data) {
         super(context, -1, data);
         this.context = context;
         this.data = data;
-        TinyDB tinyDB = new TinyDB(context);
-        memberIds = tinyDB.getListString("memberIds");
     }
 
     @Override
@@ -45,6 +42,10 @@ public class DebtListAdapter extends ArrayAdapter {
         if (amount < 0) {
             debtAmount.setText("$" + String.format("%.2f", Math.abs(amount)));
             debtAmount.setTextColor(Color.parseColor("#4CAF50"));
+        }
+        else if (amount == 0) {
+            debtAmount.setText("$" + String.format("%.2f", Math.abs(amount)));
+            debtAmount.setTextColor(Color.parseColor("#000000"));
         }
         else {
             debtAmount.setText("- $" + String.format("%.2f", Math.abs(amount)));

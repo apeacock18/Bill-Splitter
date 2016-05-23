@@ -28,7 +28,7 @@
         android:layout_toLeftOf="@+id/summaryItemDate"
         android:layout_toStartOf="@+id/summaryItemDate"
         android:ellipsize="end"
-        android:maxLines="1" />
+        android:lines="1" />
 
     <TextView
         android:id="@+id/summaryItemDescription"
@@ -44,7 +44,7 @@
         android:layout_marginBottom="5dp" />
 
     <TextView
-        android:layout_width="160dp"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:id="@+id/summaryItemDate"
         android:layout_alignBottom="@+id/summaryItemPayer"

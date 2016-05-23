@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,6 @@ public class DebtsFragment extends Fragment {
     public ArrayList<HashMap<String, Object>> data = new ArrayList<>();
     ListView summaryList;
     public static DebtListAdapter adapter;
-    public TinyDB tinyDB;
 
     public DebtsFragment() {}
 
@@ -37,7 +37,7 @@ public class DebtsFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         if (VariableManager.currentGroup != null) {
-            Group currentGroup = SignIn.currentGroup;
+            Group currentGroup = VariableManager.currentGroup;
             ArrayList<Status> _statuses = currentGroup.statuses;
             String id = VariableManager.userId;
             for (Status stat : _statuses) {
@@ -70,5 +70,4 @@ public class DebtsFragment extends Fragment {
     savedInstanceState){
         return inflater.inflate(R.layout.fragment_debts, container, false);
     }
-
 }

@@ -41,12 +41,11 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     EditText groupName;
     ArrayList<GroupMember> people;
     ArrayList<GroupMember> addedMembers = new ArrayList();
-    ArrayList knownMembers;
     ArrayAdapter<GroupMember> adapter;
     MembersCompletionView completionView;
     AddGroupMemberDialog dialog;
     FragmentManager manager;
-    TinyDB tinyDB;
+    //TinyDB tinyDB;
     String groupId;
     ArrayList<String> usernames;
     Toolbar toolbar;
@@ -64,25 +63,8 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
         dialog = new AddGroupMemberDialog();
         manager = getSupportFragmentManager();
 
-        tinyDB = new TinyDB(this);
-        people = new ArrayList();
-/*        knownMembers = tinyDB.getListObject("knownMembers", GroupMember.class);
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            public void done(List<ParseObject> users, ParseException e) {
-                if (e == null) {
-                    for (int i = 0; i < users.size(); i++) {
-                        people.add(new GroupMember(
-                                users.get(i).getString("name"),
-                                users.get(i).getString("username"),
-                                users.get(i).getObjectId()
-                        ));
-                    }
-                } else {
-                    Log.d("Users", "Error: " + e.getMessage());
-                }
-            }
-        });*/
+        //tinyDB = new TinyDB(this);
+        people = VariableManager.users;
 
         groupName = (EditText) findViewById(R.id.newGroupName);
 
@@ -123,6 +105,9 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         for (GroupMember groupMember : addedMembers) {
                             usernames.add(groupMember.getUsername());
                         }
+                        if (!usernames.contains(VariableManager.username)) {
+                            usernames.add(VariableManager.username);
+                        }
 
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
                         query.whereContainedIn("username", usernames);
@@ -130,14 +115,6 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                             public void done(List<ParseObject> users, ParseException e) {
                                 if (e == null) {
                                     if (!users.isEmpty()) {
-                                        /*for (GroupMember mem : addedMembers) {
-                                            if (!usernames.contains(mem.getUsername())) {
-                                                knownMembers.add(mem);
-                                            }
-                                        }
-                                        tinyDB.putListObject("knownMembers", knownMembers);*/
-
-                                        ParseObject user = users.get(0);
 
                                         addGroupMembers(users, 0, new addGroupMemberCalllback() {
                                             @Override
@@ -146,11 +123,6 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                                                     Group group = new Group(addedMembers, groupName.getText().toString(), groupId);
                                                     VariableManager.groups.add(group);
                                                     ManageGroups.groupAdapter.notifyDataSetChanged();
-                                                    /*ArrayList temp = tinyDB.getListObject("groupList", Group.class);
-                                                    temp.add(group);
-                                                    tinyDB.putListObject("groupList", temp);
-                                                    ArrayList arr = tinyDB.getListObject("groupList", Group.class);
-                                                    System.out.println(((Group) arr.get(0)).name + " found!");*/
                                                     finish();
                                                 }
                                             }
@@ -172,13 +144,6 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
 
     @Override
     public void onDialogPositiveClick(String username) {
-        /*for (Object obj : knownMembers) {
-            GroupMember mem = (GroupMember) obj;
-            String _username = mem.getUsername();
-            if (_username.equals(username)) {
-                completionView.addObject(new GroupMember(mem.getName(), username, mem.getUserId()));
-            }
-        }*/
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
         query.whereEqualTo("username", username);

@@ -13,18 +13,23 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class SignUp extends AppCompatActivity {
 
@@ -133,10 +138,24 @@ public class SignUp extends AppCompatActivity {
                 public void done(String id, ParseException e) {
                     if (e == null) {
                         System.out.println(id);
-                        Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                        finish();
-                        HeaderPage.getInstance().finish();
-                        startActivity(intent);
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                        query.getInBackground(id, new GetCallback<ParseObject>() {
+                            public void done(ParseObject parseUser, ParseException e) {
+                                if (e == null) {
+                                    VariableManager.currentGroup = null;
+                                    VariableManager.userId = parseUser.getObjectId();
+                                    VariableManager.user = parseUser;
+                                    VariableManager.username = parseUser.getString("username");
+                                    VariableManager.name = parseUser.getString("name");
+                                    VariableManager.groups = new ArrayList<>();
+                                    VariableManager.users = new ArrayList<>();
+                                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
+                                    finish();
+                                    HeaderPage.getInstance().finish();
+                                    startActivity(intent);
+                                }
+                            }
+                        });
                     } else {
                         e.printStackTrace();
                     }

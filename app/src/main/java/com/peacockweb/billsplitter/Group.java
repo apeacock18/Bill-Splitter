@@ -1,5 +1,9 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Context;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -70,7 +74,7 @@ public class Group {
         return true;
     }
 
-    public void updateTransactions() {
+    public void updateTransactions(final Context context) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
         query.getInBackground(groupId, new GetCallback<ParseObject>() {
             public void done(ParseObject group, ParseException e) {
@@ -83,6 +87,8 @@ public class Group {
                         }
                         transactions = transactionObjects;
                         SummaryFragment.adapter.notifyDataSetChanged();
+                        Intent intent = new Intent(context, HomePage.class);
+                        context.startActivity(intent);
                     }
                     catch (JSONException exception) {
                         exception.printStackTrace();

@@ -30,8 +30,18 @@ public class Status {
         JSONArray array = json.getJSONArray("data");
         for (int i = 0; i < array.length(); i++) {
             HashMap<String, Object> hashMap = new HashMap<>();
+            System.out.println("Recipient-Amount Pair: " + array.getJSONObject(i));
             hashMap.put("recipient", array.getJSONObject(i).getString("recipient"));
-            hashMap.put("amount", array.getJSONObject(i).getDouble("amount"));
+            Object obj = array.getJSONObject(i).get("amount");
+            Double amount = 0.0;
+            if (obj == null) {
+                amount = 0.0;
+            }
+            else {
+                amount = array.getJSONObject(i).getDouble("amount");
+            }
+
+            hashMap.put("amount", amount);
             data.add(hashMap);
             System.out.println(i + ": " + array.getJSONObject(i).toString());
         }

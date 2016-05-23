@@ -43,11 +43,13 @@ public class Transaction {
         String str = "";
         int i = 0;
         for (String name : split.keySet()) {
-            if (i == 0) {
-                str += VariableManager.getNameFromID(name);
-            }
-            else {
-                str += ", " + VariableManager.getNameFromID(name);
+            if (!name.equals(VariableManager.userId)) {
+                if (i == 0) {
+                    str += VariableManager.getNameFromID(name);
+                } else {
+                    str += ", " + VariableManager.getNameFromID(name);
+                }
+                i++;
             }
         }
         return str;

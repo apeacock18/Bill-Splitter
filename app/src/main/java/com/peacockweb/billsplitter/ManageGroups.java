@@ -64,7 +64,6 @@ public class ManageGroups extends AppCompatActivity {
             ParseObject user = VariableManager.user;
             user.put("currentGroup", group.groupId);
             user.saveInBackground();
-            //tinyDB.putListObject("paymentSummaries", new ArrayList());
         }
     };
 
