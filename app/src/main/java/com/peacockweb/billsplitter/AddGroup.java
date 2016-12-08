@@ -1,40 +1,20 @@
 package com.peacockweb.billsplitter;
 
-import android.content.Intent;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.app.DialogFragment;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListPopupWindow;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
-import com.parse.FindCallback;
-import com.parse.FunctionCallback;
-import com.parse.GetCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.peacockweb.billsplitter.util.TinyDB;
+import com.peacockweb.billsplitter.util.VariableManager;
 import com.tokenautocomplete.TokenCompleteTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.NoticeDialogListener, TokenCompleteTextView.TokenListener {
 
@@ -64,7 +44,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
         manager = getSupportFragmentManager();
 
         //tinyDB = new TinyDB(this);
-        people = VariableManager.users;
+        //people = VariableManager.users;
 
         groupName = (EditText) findViewById(R.id.newGroupName);
 
@@ -95,7 +75,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
         if (str != null && !str.isEmpty()) {
             HashMap<String, String> params = new HashMap<>();
             params.put("name", groupName.getText().toString());
-            ParseCloud.callFunctionInBackground("createGroup", params, new FunctionCallback<String>() {
+            /*ParseCloud.callFunctionInBackground("createGroup", params, new FunctionCallback<String>() {
                 public void done(String id, ParseException e) {
                     if (e == null) {
 
@@ -138,14 +118,14 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         e.printStackTrace();
                     }
                 }
-            });
+            });*/
         }
     }
 
     @Override
     public void onDialogPositiveClick(String username) {
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+        /*arseQuery<ParseObject> query = ParseQuery.getQuery("Users");
         query.whereEqualTo("username", username);
         query.findInBackground(new FindCallback<ParseObject>() {
             public void done(List<ParseObject> users, ParseException e) {
@@ -160,7 +140,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
     }
 
     public void addMemberClick(View view) {
@@ -178,7 +158,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
             }
         }
         else {
-            ParseObject mem = (ParseObject) members.get(index);
+            /*ParseObject mem = (ParseObject) members.get(index);
             HashMap<String, String> params1 = new HashMap<>();
             params1.put("userId", mem.getObjectId());
             params1.put("groupId", groupId);
@@ -192,7 +172,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                         System.out.println("Error: " + e.getMessage());
                     }
                 }
-            });
+            });*/
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.peacockweb.billsplitter;
 
-import org.json.JSONArray;
+import com.peacockweb.billsplitter.util.VariableManager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -22,8 +22,7 @@ public class Transaction {
 
     }*/
 
-    public Transaction(String jsonString) throws JSONException {
-        JSONObject json = new JSONObject(jsonString);
+    public Transaction(JSONObject json) throws JSONException {
         payee = json.getString("payee");
         amount = json.getDouble("amount");
         desc = json.getString("description");
@@ -40,10 +39,10 @@ public class Transaction {
     }
 
     public String getRecipientsStatement() {
-        String str = "";
+        String str = "RECIPIENT STATEMENT";
         int i = 0;
-        for (String name : split.keySet()) {
-            if (!name.equals(VariableManager.userId)) {
+/*        for (String name : split.keySet()) {
+            if (!name.equals(VariableManager.getUserId())) {
                 if (i == 0) {
                     str += VariableManager.getNameFromID(name);
                 } else {
@@ -51,13 +50,13 @@ public class Transaction {
                 }
                 i++;
             }
-        }
+        }*/
         return str;
     }
 
     public String getPayerStatement() {
-        String str = "";
-        str += VariableManager.getNameFromID(payee) + " paid $" + String.format("%.2f", amount);
+        String str = "PAYER STATEMENT";
+        /*str += VariableManager.getNameFromID(payee) + " paid $" + String.format("%.2f", amount);*/
         return str;
     }
 }

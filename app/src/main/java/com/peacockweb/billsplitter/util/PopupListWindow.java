@@ -1,14 +1,12 @@
 package com.peacockweb.billsplitter.util;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.widget.ListPopupWindow;
+import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
-import android.view.View.OnClickListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
+import android.widget.ListPopupWindow;
 
 import com.peacockweb.billsplitter.R;
 

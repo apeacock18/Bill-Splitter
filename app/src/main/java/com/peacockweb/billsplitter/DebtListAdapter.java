@@ -8,9 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.peacockweb.billsplitter.util.TinyDB;
+import com.peacockweb.billsplitter.util.VariableManager;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -37,7 +36,8 @@ public class DebtListAdapter extends ArrayAdapter {
         TextView payer = (TextView) rowView.findViewById(R.id.debtPayer);
         TextView debtAmount = (TextView) rowView.findViewById(R.id.debtAmount);
 
-        payer.setText(VariableManager.getNameFromID(data.get(position).get("recipient").toString()));
+        //payer.setText(VariableManager.getNameFromID(data.get(position).get("recipient").toString()));
+        payer.setText("PAYER");
         Double amount = (Double) (data.get(position).get("amount"));
         if (amount < 0) {
             debtAmount.setText("$" + String.format("%.2f", Math.abs(amount)));

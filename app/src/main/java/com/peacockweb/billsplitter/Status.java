@@ -1,15 +1,11 @@
 package com.peacockweb.billsplitter;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by apeacock on 5/17/16.
@@ -23,9 +19,7 @@ public class Status {
         id = "";
     }
 
-    public Status(String jsonString) throws JSONException {
-        JSONObject json = new JSONObject(jsonString);
-        System.out.println(jsonString);
+    public Status(JSONObject json) throws JSONException {
         id = json.getString("id");
         JSONArray array = json.getJSONArray("data");
         for (int i = 0; i < array.length(); i++) {

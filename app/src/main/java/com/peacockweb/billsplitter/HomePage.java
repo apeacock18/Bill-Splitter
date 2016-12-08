@@ -2,23 +2,18 @@ package com.peacockweb.billsplitter;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.parse.Parse;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class HomePage extends AppCompatActivity {
@@ -36,20 +31,20 @@ public class HomePage extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new SummaryFragment(), "Summary");
         adapter.addFragment(new DebtsFragment(), "Debts");
+        adapter.addFragment(new SummaryFragment(), "Summary");
         viewPager.setAdapter(adapter);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-/*      paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
+        /*paymentSummaries.add(new PaymentSummary("Chris", "Pizza", "4/5/16 9:23 PM", new String[]{"Peter", "David"}, 23.87, false));
         paymentSummaries.add(new PaymentSummary("David", "Gas", "4/5/16 9:23 PM", new String[]{"Sarah", "Chris"}, 27.12, false));
         paymentSummaries.add(new PaymentSummary("Sarah", "Personal Debt", "4/5/16 9:23 PM", new String[]{"David"}, 13.50, true));
 
-        TransactionsListAdapter adapter = new TransactionsListAdapter(this, paymentSummaries);
-        ListView listView = (ListView) findViewById(R.id.main_bill_list);
-        listView.setAdapter(adapter);
+        TransactionsListAdapter tAdapter = new TransactionsListAdapter(this, paymentSummaries);
+        ListView listView = (ListView) findViewById(R.id.summary_list);
+        listView.setAdapter(tAdapter);
         listView.setOnItemClickListener(mMessageClickedHandler);*/
     }
 

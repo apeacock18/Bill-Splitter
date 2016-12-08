@@ -1,39 +1,21 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.parse.FindCallback;
-import com.parse.FunctionCallback;
-import com.parse.GetCallback;
-import com.parse.Parse;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
-
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.peacockweb.billsplitter.util.NetworkManager;
 
 public class SignUp extends AppCompatActivity {
 
-    EditText fullName;
+    EditText firstName;
+    EditText lastName;
     EditText password;
     EditText email;
     EditText phone;
@@ -44,7 +26,8 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        fullName = (EditText) findViewById(R.id.SUfullName);
+        firstName = (EditText) findViewById(R.id.su_first_name);
+        lastName = (EditText) findViewById(R.id.su_last_name);
         password = (EditText) findViewById(R.id.SUpassword);
         email = (EditText) findViewById(R.id.SUemail);
         phone = (EditText) findViewById(R.id.SUphone);
@@ -72,11 +55,20 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
-        fullName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        firstName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    fullName.setError(null);
+                    firstName.setError(null);
+                }
+            }
+        });
+
+        lastName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    lastName.setError(null);
                 }
             }
         });
@@ -123,66 +115,15 @@ public class SignUp extends AppCompatActivity {
     public void signUpDone(View view) {
         if (FieldsAreValid()) {
 
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            // Clear token from shared prefs before continuing
+            SharedPreferences prefs = getSharedPreferences(MyApp.SHARED_PREF_KEY, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.clear();
             editor.commit();
 
-            HashMap<String, String> params = new HashMap<>();
-            params.put("name", fullName.getText().toString());
-            params.put("email", email.getText().toString());
-            params.put("phoneNumber", phone.getText().toString());
-            params.put("username", username.getText().toString());
-            params.put("password", get_SHA_512_SecurePassword(password.getText().toString() + username.getText().toString(), ""));
-            ParseCloud.callFunctionInBackground("create", params, new FunctionCallback<String>() {
-                public void done(String id, ParseException e) {
-                    if (e == null) {
-                        System.out.println(id);
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
-                        query.getInBackground(id, new GetCallback<ParseObject>() {
-                            public void done(ParseObject parseUser, ParseException e) {
-                                if (e == null) {
-                                    VariableManager.currentGroup = null;
-                                    VariableManager.userId = parseUser.getObjectId();
-                                    VariableManager.user = parseUser;
-                                    VariableManager.username = parseUser.getString("username");
-                                    VariableManager.name = parseUser.getString("name");
-                                    VariableManager.groups = new ArrayList<>();
-                                    VariableManager.users = new ArrayList<>();
-                                    Intent intent = new Intent(getApplicationContext(), HomePage.class);
-                                    finish();
-                                    HeaderPage.getInstance().finish();
-                                    startActivity(intent);
-                                }
-                            }
-                        });
-                    } else {
-                        e.printStackTrace();
-                    }
-                }
-            });
+            NetworkManager.signUp(username.getText().toString(), password.getText().toString(), firstName.getText().toString(),
+                    lastName.getText().toString(), email.getText().toString(), phone.getText().toString(), this);
         }
-    }
-
-    public String get_SHA_512_SecurePassword(String passwordToHash, String salt)
-    {
-        String generatedPassword = null;
-        try {
-
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            byte[] bytes = md.digest(passwordToHash.concat(salt).getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            generatedPassword = sb.toString();
-        }
-        catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
-        return generatedPassword;
     }
 
     public boolean isValidEmailAddress(String email) {
@@ -206,8 +147,12 @@ public class SignUp extends AppCompatActivity {
             email.setError("Required field");
             isValid = false;
         }
-        if (fullName.getText().toString().equals(null) || fullName.getText().toString().equals("")) {
-            fullName.setError("Required field");
+        if (firstName.getText().toString().equals(null) || firstName.getText().toString().equals("")) {
+            firstName.setError("Required field");
+            isValid = false;
+        }
+        if (lastName.getText().toString().equals(null) || lastName.getText().toString().equals("")) {
+            lastName.setError("Required field");
             isValid = false;
         }
         return isValid;

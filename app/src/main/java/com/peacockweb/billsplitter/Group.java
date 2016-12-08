@@ -2,13 +2,6 @@ package com.peacockweb.billsplitter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 import org.json.JSONException;
 
@@ -19,7 +12,7 @@ import java.util.List;
  * Created by apeacock on 4/29/16.
  */
 public class Group {
-    ArrayList<GroupMember> groupMembers;
+    ArrayList<Integer> groupMembers;
     ArrayList<Status> statuses;
     ArrayList<Transaction> transactions;
     String name;
@@ -33,7 +26,7 @@ public class Group {
         groupId = "";
     }
 
-    public Group(ArrayList<GroupMember> members, String name, String groupId,
+    public Group(ArrayList<Integer> members, String name, String groupId,
                  ArrayList<Status> statuses, ArrayList<Transaction> transactions) {
         this.groupId = groupId;
         groupMembers = members;
@@ -42,25 +35,12 @@ public class Group {
         this.transactions = transactions;
     }
 
-    public Group(ArrayList<GroupMember> members, String name, String groupId) {
+    public Group(ArrayList<Integer> members, String name, String groupId) {
         this.groupId = groupId;
         groupMembers = members;
         this.name = name;
         this.statuses = new ArrayList<>();
         this.transactions = new ArrayList<>();
-    }
-
-    public String getMemberNames() {
-        String str = "";
-        for (int i = 0; i < groupMembers.size(); i++) {
-            if (i == 0) {
-                str += groupMembers.get(i).getName();
-            }
-            else {
-                str += ", " + groupMembers.get(i).getName();
-            }
-        }
-        return str;
     }
 
     @Override
@@ -72,51 +52,5 @@ public class Group {
         if (!otherGroup.groupId.equals(groupId)) return false;
 
         return true;
-    }
-
-    public void updateTransactions(final Context context) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
-        query.getInBackground(groupId, new GetCallback<ParseObject>() {
-            public void done(ParseObject group, ParseException e) {
-                if (e == null) {
-                    ArrayList<Transaction> transactionObjects = new ArrayList();
-                    List<String> parseTransactions = group.getList("transactions");
-                    try {
-                        for (String json : parseTransactions) {
-                            transactionObjects.add(new Transaction(json));
-                        }
-                        transactions = transactionObjects;
-                        SummaryFragment.adapter.notifyDataSetChanged();
-                        Intent intent = new Intent(context, HomePage.class);
-                        context.startActivity(intent);
-                    }
-                    catch (JSONException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-            }
-        });
-    }
-
-    public void updateStatuses() {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
-        query.getInBackground(groupId, new GetCallback<ParseObject>() {
-            public void done(ParseObject group, ParseException e) {
-                if (e == null) {
-                    ArrayList<Status> statusObjects = new ArrayList();
-                    List<String> parseStatuses = group.getList("status");
-                    try {
-                        for (String json : parseStatuses) {
-                            statusObjects.add(new Status(json));
-                        }
-                        statuses = statusObjects;
-                        DebtsFragment.adapter.notifyDataSetChanged();
-                    }
-                    catch (JSONException exception) {
-                        exception.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 }

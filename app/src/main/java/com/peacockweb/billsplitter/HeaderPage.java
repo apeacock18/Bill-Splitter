@@ -1,16 +1,11 @@
 package com.peacockweb.billsplitter;
 
-import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import com.parse.Parse;
 
 public class HeaderPage extends AppCompatActivity {
 

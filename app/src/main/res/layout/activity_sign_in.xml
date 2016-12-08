@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/SIemail"
+        android:id="@+id/SIusername"
         android:layout_below="@+id/textView3"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -36,7 +36,7 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/SIpassword"
-        android:layout_below="@+id/SIemail"
+        android:layout_below="@+id/SIusername"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
@@ -47,24 +47,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:id="@+id/SIback"
-        android:layout_alignTop="@+id/SIdone"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="64dp"
-        android:layout_marginStart="64dp"
-        android:onClick="SIbackClick" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Done"
         android:id="@+id/SIdone"
         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/SIback"
-        android:layout_toEndOf="@+id/SIback"
-        android:layout_marginLeft="43dp"
-        android:layout_marginStart="43dp"
-        android:onClick="SIdoneClick" />
+        android:onClick="SIdoneClick"
+        android:layout_alignRight="@+id/SIpassword"
+        android:layout_alignEnd="@+id/SIpassword"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 </RelativeLayout>

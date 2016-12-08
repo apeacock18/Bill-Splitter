@@ -2,16 +2,11 @@ package com.peacockweb.billsplitter;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -20,26 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListPopupWindow;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.FunctionCallback;
-import com.parse.GetCallback;
-import com.parse.ParseCloud;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.peacockweb.billsplitter.util.TinyDB;
 
-import java.io.Console;
+import com.peacockweb.billsplitter.util.VariableManager;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -54,7 +39,7 @@ public class AddBill extends AppCompatActivity {
     EditText description;
     Button date;
     //TinyDB tinyDB;
-    List<GroupMember> payers;
+    List<Integer> payers;
     List<String> recipients;
     private DatePicker datePicker;
     private Calendar calendar;
@@ -115,8 +100,8 @@ public class AddBill extends AppCompatActivity {
 
         List groupMembers;
         recipients = new ArrayList<>();
-        if (VariableManager.currentGroup != null) {
-            Group currentGroup = VariableManager.currentGroup;
+        if (VariableManager.selectedGroup != null) {
+            Group currentGroup = VariableManager.selectedGroup;
             groupMembers = currentGroup.groupMembers;
             for (Object mem : groupMembers) {
                 recipients.add(((GroupMember)mem).getName());
@@ -124,8 +109,8 @@ public class AddBill extends AppCompatActivity {
         }
 
         payers = new ArrayList<>();
-        if (VariableManager.currentGroup != null) {
-            Group currentGroup = VariableManager.currentGroup;
+        if (VariableManager.selectedGroup != null) {
+            Group currentGroup = VariableManager.selectedGroup;
             payers = currentGroup.groupMembers;
         }
 
@@ -208,10 +193,10 @@ public class AddBill extends AppCompatActivity {
             if (fieldsAreValid()) {
 
                 System.out.println("Name: " + payerText.getText().toString());
-                System.out.println("ObjectID: " + VariableManager.getObjectIDFromName(payerText.getText().toString()));
-                final Group group = VariableManager.currentGroup;
+                //System.out.println("ObjectID: " + VariableManager.getObjectIDFromName(payerText.getText().toString()));
+                final Group group = VariableManager.selectedGroup;
                 final Context context = this;
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
+                /*ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
                 query.getInBackground(group.groupId, new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject group, ParseException e) {;
@@ -250,7 +235,7 @@ public class AddBill extends AppCompatActivity {
                             }
                         });
                     }
-                });
+                });*/
             }
         }
 
@@ -289,8 +274,9 @@ public class AddBill extends AppCompatActivity {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
         PopupMenu menu = new PopupMenu(this, payerText);
-        for (GroupMember payer : payers) {
-            menu.getMenu().add(payer.getName());
+        // TODO
+        for (Integer payer : payers) {
+            menu.getMenu().add(payer);
         }
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

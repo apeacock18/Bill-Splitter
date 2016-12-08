@@ -1,28 +1,18 @@
 package com.peacockweb.billsplitter;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.peacockweb.billsplitter.util.TinyDB;
+import com.peacockweb.billsplitter.util.VariableManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class DebtsFragment extends Fragment {
 
@@ -36,10 +26,10 @@ public class DebtsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (VariableManager.currentGroup != null) {
-            Group currentGroup = VariableManager.currentGroup;
+        if (VariableManager.selectedGroup != null) {
+            Group currentGroup = VariableManager.selectedGroup;
             ArrayList<Status> _statuses = currentGroup.statuses;
-            String id = VariableManager.userId;
+            String id = VariableManager.getUserId();
             for (Status stat : _statuses) {
                 if (stat.id.equals(id)) {
                     data = stat.data;

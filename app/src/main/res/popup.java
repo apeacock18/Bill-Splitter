@@ -1,13 +1,17 @@
 /**
  * Created by Andrew on 4/6/2016.
  */
-import android.app.*;
+
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 public class ShowPopUp extends Activity {
 

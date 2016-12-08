@@ -2,24 +2,14 @@ package com.peacockweb.billsplitter;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-
-import com.parse.FindCallback;
-import com.parse.GetCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
 
 import java.util.List;
 
@@ -67,7 +57,7 @@ public class AddGroupMemberDialog extends DialogFragment {
                         EditText editText = (EditText) v.findViewById(R.id.username);
                         final String name = editText.getText().toString().toLowerCase();
 
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
+                        /*ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
                         query.whereEqualTo("username", name);
                         query.findInBackground(new FindCallback<ParseObject>() {
                             public void done(List<ParseObject> obj, ParseException e) {
@@ -81,7 +71,7 @@ public class AddGroupMemberDialog extends DialogFragment {
                                     Log.d("username", "Error: " + e.getMessage());
                                 }
                             }
-                        });
+                        });*/
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

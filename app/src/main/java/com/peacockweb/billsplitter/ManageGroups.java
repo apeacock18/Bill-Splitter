@@ -1,9 +1,9 @@
 package com.peacockweb.billsplitter;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,8 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.parse.ParseObject;
-import com.peacockweb.billsplitter.util.TinyDB;
+import com.peacockweb.billsplitter.util.VariableManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +38,8 @@ public class ManageGroups extends AppCompatActivity {
         System.out.println(groupsData.size() + " groups contained in adapter");
         groupAdapter = new GroupListAdapter(this, groupsData);
         Button currentGroup = (Button) findViewById(R.id.currentGroupButton);
-        if (VariableManager.currentGroup != null) {
-            currentGroup.setText(VariableManager.currentGroup.name);
+        if (VariableManager.selectedGroup != null) {
+            currentGroup.setText(VariableManager.selectedGroup.name);
         }
 
         ListView listView1 = (ListView) findViewById(R.id.groupsList);
@@ -53,17 +52,17 @@ public class ManageGroups extends AppCompatActivity {
             Button currentGroup = (Button) findViewById(R.id.currentGroupButton);
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
-            VariableManager.currentGroup = group;
+            VariableManager.selectedGroup = group;
             List members = group.groupMembers;
             ArrayList<String> memberIds = new ArrayList<String>();
             for (Object mem : members) {
-                if (!VariableManager.userId.equals(((GroupMember)mem).getUserId())) {
+                if (!VariableManager.getUserId().equals(((GroupMember)mem).getUserId())) {
                     memberIds.add(((GroupMember)mem).getUserId());
                 }
             }
-            ParseObject user = VariableManager.user;
+            /*ParseObject user = VariableManager.user;
             user.put("currentGroup", group.groupId);
-            user.saveInBackground();
+            user.saveInBackground();*/
         }
     };
 

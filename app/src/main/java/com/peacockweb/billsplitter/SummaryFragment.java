@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.peacockweb.billsplitter.util.VariableManager;
 
 import java.util.ArrayList;
 
@@ -29,8 +30,8 @@ public class SummaryFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (VariableManager.currentGroup != null) {
-            transactions = VariableManager.currentGroup.transactions;
+        if (VariableManager.selectedGroup != null) {
+            transactions = VariableManager.selectedGroup.transactions;
         }
         else {
             transactions = new ArrayList<>();

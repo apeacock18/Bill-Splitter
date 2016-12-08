@@ -1,23 +1,17 @@
 package com.peacockweb.billsplitter;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.peacockweb.billsplitter.util.TinyDB;
+import com.peacockweb.billsplitter.util.VariableManager;
 
 import java.util.ArrayList;
 
@@ -40,8 +34,8 @@ public class GroupFragment extends Fragment {
         groupAdapter = new GroupListAdapter(getContext(), groupsData);
         Button currentGroup = (Button) getActivity().findViewById(R.id.currentGroupButton);
 
-        if (VariableManager.currentGroup != null) {
-            currentGroup.setText(VariableManager.currentGroup.name);
+        if (VariableManager.selectedGroup != null) {
+            currentGroup.setText(VariableManager.selectedGroup.name);
         }
 
         ListView listView1 = (ListView) view.findViewById(R.id.groupsList);
@@ -60,11 +54,7 @@ public class GroupFragment extends Fragment {
             Button currentGroup = (Button) getActivity().findViewById(R.id.currentGroupButton);
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
-            VariableManager.currentGroup = group;
-            ParseObject user = VariableManager.user;
-            user.put("currentGroup", group.groupId);
-            user.saveInBackground();
-            System.out.println(groupsData.size() + " groups contained in adapter");
+            VariableManager.selectedGroup = group;
         }
     };
 
