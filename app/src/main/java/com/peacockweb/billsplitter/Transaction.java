@@ -18,9 +18,6 @@ public class Transaction {
     public String desc;
     public String date;
 
-/*    public Transaction(String name, Double amount, ) {
-
-    }*/
 
     public Transaction(JSONObject json) throws JSONException {
         payee = json.getString("payee");
@@ -39,24 +36,24 @@ public class Transaction {
     }
 
     public String getRecipientsStatement() {
-        String str = "RECIPIENT STATEMENT";
+        String str = "";
         int i = 0;
-/*        for (String name : split.keySet()) {
+        for (String name : split.keySet()) {
             if (!name.equals(VariableManager.getUserId())) {
                 if (i == 0) {
-                    str += VariableManager.getNameFromID(name);
+                    str += name;
                 } else {
-                    str += ", " + VariableManager.getNameFromID(name);
+                    str += ", " + name;
                 }
                 i++;
             }
-        }*/
+        }
         return str;
     }
 
     public String getPayerStatement() {
-        String str = "PAYER STATEMENT";
-        /*str += VariableManager.getNameFromID(payee) + " paid $" + String.format("%.2f", amount);*/
+        String str = "";
+        str += VariableManager.findUserNameById(payee) + " paid $" + String.format("%.2f", amount);
         return str;
     }
 }

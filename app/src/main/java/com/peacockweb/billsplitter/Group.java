@@ -1,35 +1,31 @@
 package com.peacockweb.billsplitter;
 
-import android.content.Context;
-import android.content.Intent;
-
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Created by apeacock on 4/29/16.
  */
 public class Group {
-    ArrayList<Integer> groupMembers;
+    ArrayList<Integer> groupMemberIds;
     ArrayList<Status> statuses;
     ArrayList<Transaction> transactions;
     String name;
     String groupId;
 
     public Group() {
-        groupMembers = new ArrayList<>();
+        groupMemberIds = new ArrayList<>();
         statuses = new ArrayList<>();
         transactions = new ArrayList<>();
         name = "";
         groupId = "";
     }
 
-    public Group(ArrayList<Integer> members, String name, String groupId,
+    public Group(Set<Integer> members, String name, String groupId,
                  ArrayList<Status> statuses, ArrayList<Transaction> transactions) {
         this.groupId = groupId;
-        groupMembers = members;
+        groupMemberIds = new ArrayList<>();
+        groupMemberIds.addAll(members);
         this.name = name;
         this.statuses = statuses;
         this.transactions = transactions;
@@ -37,7 +33,7 @@ public class Group {
 
     public Group(ArrayList<Integer> members, String name, String groupId) {
         this.groupId = groupId;
-        groupMembers = members;
+        groupMemberIds = members;
         this.name = name;
         this.statuses = new ArrayList<>();
         this.transactions = new ArrayList<>();

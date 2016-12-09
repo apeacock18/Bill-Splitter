@@ -5,7 +5,7 @@ package com.peacockweb.billsplitter;
  */
 public class User {
     String username;
-    String userID;
+    public String userID;
     String fName;
     String lName;
     String email;
@@ -27,5 +27,9 @@ public class User {
         this.lName = lName;
         this.email = email;
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getFullName() {
+        return fName + " " + lName;
     }
 }

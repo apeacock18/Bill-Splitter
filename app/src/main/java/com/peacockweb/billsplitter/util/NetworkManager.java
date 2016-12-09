@@ -33,7 +33,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by apeacock on 12/6/16.
@@ -169,10 +171,59 @@ public class NetworkManager {
                             String name = group.getString("name");
 
                             JSONArray membersArray = group.getJSONArray("members");
-                            ArrayList<Integer> members = new ArrayList<>();
+                            Set<Integer> members = new HashSet<>();
                             for (int j = 0; j < membersArray.length(); j++) {
                                 members.add(membersArray.getInt(j));
                             }
+
+                            ArrayList<Integer> memIds = new ArrayList<>();
+                            VariableManager.userIds = memIds;
+                            memIds.addAll(members);
+
+                            String memberString = "[";
+                            for (int j = 0; j < memIds.size(); j++) {
+                                if (j != 0) {
+                                    memberString += ", ";
+                                }
+                                memberString += Integer.toString(memIds.get(j));
+                            }
+                            memberString += "]";
+                            Log.d("Array String", memberString);
+
+                            HashMap map = new HashMap<>();
+                            map.put("token", VariableManager.getToken());
+                            map.put("userIds", memberString);
+
+                            NetworkManager.runRequest("person/info/", map, new NetworkCallBackCallBack() {
+                                @Override
+                                public void response(String response) {
+                                    try {
+                                        Object json = new JSONTokener(response).nextValue();
+                                        if (json instanceof JSONObject) {
+                                            JSONObject error = (JSONObject) json;
+                                            Log.d("Django Error 3", error.toString());
+                                        } else {
+                                            JSONArray userArray = (JSONArray) json;
+                                            for (int i = 0; i < userArray.length(); i++) {
+                                                JSONObject obj = userArray.getJSONObject(i);
+
+                                                VariableManager.addUser(new User(
+                                                        obj.getString("username"),
+                                                        Integer.toString(obj.getInt("id")),
+                                                        obj.getString("first_name"),
+                                                        obj.getString("last_name"),
+                                                        obj.getString("email"),
+                                                        obj.getString("phoneNumber")
+                                                ));
+                                            }
+
+                                            Log.d("Name Log", VariableManager.findUserNameById("1"));
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
 
                             Group _group = new Group(members, name, groupId, statuses, transactions);
                             VariableManager.addGroup(_group);

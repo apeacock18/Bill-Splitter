@@ -29,11 +29,10 @@ public class DebtsFragment extends Fragment {
         if (VariableManager.selectedGroup != null) {
             Group currentGroup = VariableManager.selectedGroup;
             ArrayList<Status> _statuses = currentGroup.statuses;
-            String id = VariableManager.getUserId();
+
             for (Status stat : _statuses) {
-                if (stat.id.equals(id)) {
+                if (stat.id.equals(VariableManager.getUserId())) {
                     data = stat.data;
-                    System.out.println("ID: " + data.get(0).get("recipient") + ", Amount: " + data.get(0).get("amount"));
                 }
             }
         }

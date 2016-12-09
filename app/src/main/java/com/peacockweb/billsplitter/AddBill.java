@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,9 @@ import android.widget.PopupMenu;
 import android.widget.Toast;
 
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.peacockweb.billsplitter.util.NetworkManager;
 import com.peacockweb.billsplitter.util.VariableManager;
 
 import java.text.NumberFormat;
@@ -30,16 +34,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class AddBill extends AppCompatActivity {
 
-    Button payerText;
+    Button selectPayer;
     EditText total;
     EditText description;
     Button date;
-    //TinyDB tinyDB;
-    List<Integer> payers;
+    Integer payee;
+    List<Integer> payerIds;
     List<String> recipients;
     private DatePicker datePicker;
     private Calendar calendar;
@@ -54,7 +57,7 @@ public class AddBill extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        payerText = (Button) findViewById(R.id.mainPayer);
+        selectPayer = (Button) findViewById(R.id.mainPayer);
         total = (EditText) findViewById(R.id.billTotal);
         description = (EditText) findViewById(R.id.billDescription);
         date = (Button) findViewById(R.id.dateInput);
@@ -102,19 +105,19 @@ public class AddBill extends AppCompatActivity {
         recipients = new ArrayList<>();
         if (VariableManager.selectedGroup != null) {
             Group currentGroup = VariableManager.selectedGroup;
-            groupMembers = currentGroup.groupMembers;
-            for (Object mem : groupMembers) {
-                recipients.add(((GroupMember)mem).getName());
+            for (Integer mem : currentGroup.groupMemberIds) {
+                recipients.add(VariableManager.findUserNameById(Integer.toString(mem)));
             }
         }
 
-        payers = new ArrayList<>();
+        payerIds = new ArrayList<>();
         if (VariableManager.selectedGroup != null) {
             Group currentGroup = VariableManager.selectedGroup;
-            payers = currentGroup.groupMembers;
+            payerIds = currentGroup.groupMemberIds;
+            payee = payerIds.get(0);
         }
 
-        PayerListAdapter adapter = new PayerListAdapter(this, payers);
+        PayerListAdapter adapter = new PayerListAdapter(this, payerIds);
         ListView listView1 = (ListView) findViewById(R.id.billPayerList);
         listView1.setAdapter(adapter);
         listView1.setOnItemClickListener(mMessageClickedHandler);
@@ -175,8 +178,8 @@ public class AddBill extends AppCompatActivity {
     };
 
     private void showDate(int year, int month, int day) {
-        date.setText(new StringBuilder().append(month).append("-")
-                .append(day).append("-").append(year));
+        date.setText(new StringBuilder().append(year).append("-")
+                .append(month).append("-").append(day));
     }
 
     @Override
@@ -192,17 +195,54 @@ public class AddBill extends AppCompatActivity {
         {
             if (fieldsAreValid()) {
 
-                System.out.println("Name: " + payerText.getText().toString());
-                //System.out.println("ObjectID: " + VariableManager.getObjectIDFromName(payerText.getText().toString()));
+                System.out.println("Name: " + payee + " " + selectPayer.getText().toString());
+
                 final Group group = VariableManager.selectedGroup;
                 final Context context = this;
+
+                selectPayer = (Button) findViewById(R.id.mainPayer);
+                total = (EditText) findViewById(R.id.billTotal);
+                description = (EditText) findViewById(R.id.billDescription);
+                date = (Button) findViewById(R.id.dateInput);
+
+                // 'token', 'groupId', 'payee', 'split', 'amount', 'date', 'description'
+
+                HashMap<String, String> split = new HashMap<>();
+                ArrayList<Integer> userIds = new ArrayList<>();
+                for (Integer userId : VariableManager.userIds) {
+                    Double splitAmount = (100.0 / VariableManager.userIds.size());
+                    split.put(Integer.toString(userId), Double.toString(splitAmount));
+                }
+
+                String totalNum = total.getText().toString();
+                String rawNum = totalNum.replaceAll("[^x0-9]", "");
+                Log.d("Formatted Amount", rawNum);
+
+                Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+
+                HashMap<String, String> params = new HashMap<>();
+                params.put("token", VariableManager.getToken());
+                params.put("groupId", VariableManager.selectedGroup.groupId);
+                params.put("payee", Integer.toString(payee));
+                params.put("split", gson.toJson(split));
+                params.put("amount", rawNum);
+                params.put("date", "2016-06-18");
+                params.put("description", description.getText().toString());
+
+                NetworkManager.runRequest("transaction/new/", params, new NetworkManager.NetworkCallBackCallBack() {
+                    @Override
+                    public void response(String response) {
+                        Log.d("Response JSON", response);
+                    }
+                });
+
                 /*ParseQuery<ParseObject> query = ParseQuery.getQuery("Groups");
                 query.getInBackground(group.groupId, new GetCallback<ParseObject>() {
                     @Override
                     public void done(ParseObject group, ParseException e) {;
                         HashMap<String, Object> params = new HashMap<>();
                         params.put("groupId", VariableManager.currentGroup.groupId);
-                        params.put("payee", VariableManager.getObjectIDFromName(payerText.getText().toString()));
+                        params.put("payee", VariableManager.getObjectIDFromName(selectPayer.getText().toString()));
                         HashMap split = new HashMap();
                         List memberIds = group.getList("members");
                         for (int i = 0; i < memberIds.size(); i++) {
@@ -252,8 +292,8 @@ public class AddBill extends AppCompatActivity {
             total.setError("Need enter an amount");
             flag = false;
         }
-        if (payerText.getText().toString().equals(null) || payerText.getText().toString().equals("")) {
-            payerText.setError("Need to enter a payer");
+        if (selectPayer.getText().toString().equals(null) || selectPayer.getText().toString().equals("")) {
+            selectPayer.setError("Need to enter a payer");
             flag = false;
         }
         if (description.getText().toString().equals(null) || description.getText().toString().equals("")) {
@@ -273,16 +313,16 @@ public class AddBill extends AppCompatActivity {
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        PopupMenu menu = new PopupMenu(this, payerText);
+        PopupMenu menu = new PopupMenu(this, selectPayer);
         // TODO
-        for (Integer payer : payers) {
-            menu.getMenu().add(payer);
+        for (Integer payer : payerIds) {
+            menu.getMenu().add(VariableManager.findUserNameById(Integer.toString(payer)));
         }
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                payerText.setText(item.getTitle());
+                selectPayer.setText(item.getTitle());
                 return false;
             }
         });

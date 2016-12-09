@@ -17,6 +17,7 @@ import java.util.List;
  * Created by apeacock on 5/18/16.
  */
 public class DebtListAdapter extends ArrayAdapter {
+
     private final Context context;
     private final List<HashMap<String, Object>> data;
 
@@ -36,8 +37,7 @@ public class DebtListAdapter extends ArrayAdapter {
         TextView payer = (TextView) rowView.findViewById(R.id.debtPayer);
         TextView debtAmount = (TextView) rowView.findViewById(R.id.debtAmount);
 
-        //payer.setText(VariableManager.getNameFromID(data.get(position).get("recipient").toString()));
-        payer.setText("PAYER");
+        payer.setText(VariableManager.findUserNameById(data.get(position).get("recipient").toString()));
         Double amount = (Double) (data.get(position).get("amount"));
         if (amount < 0) {
             debtAmount.setText("$" + String.format("%.2f", Math.abs(amount)));

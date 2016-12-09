@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.peacockweb.billsplitter.util.VariableManager;
+
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -32,7 +34,7 @@ class PayerListAdapter extends ArrayAdapter {
         TextView payerName = (TextView) rowView.findViewById(R.id.payerNameText);
         TextView splitPercent = (TextView) rowView.findViewById(R.id.payerSplitPercentText);
 
-        payerName.setText(values.get(position));
+        payerName.setText(VariableManager.findUserNameById(Integer.toString(values.get(position))));
         double split = 100/values.size();
         DecimalFormat df = new DecimalFormat("#.##");
         String str = String.valueOf(df.format(split));

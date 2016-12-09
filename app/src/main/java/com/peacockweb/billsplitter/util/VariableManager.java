@@ -21,6 +21,9 @@ public class VariableManager {
     public static Group selectedGroup;
     public static ArrayList<Group> groups;
     public static ArrayList<User> users;
+    public static ArrayList<Integer> userIds;
+
+    public static final String SHARED_PREF_KEY = "shared_pref_key";
 
 
     public static void Init(String username, String fName, String lName, String email,
@@ -28,6 +31,7 @@ public class VariableManager {
 
         users = new ArrayList<>();
         groups = new ArrayList<>();
+        userIds = new ArrayList<>();
 
         VariableManager.username = username;
         VariableManager.userID = userID;
@@ -36,6 +40,24 @@ public class VariableManager {
         VariableManager.email = email;
         VariableManager.token = token;
         VariableManager.phoneNumber = phoneNumber;
+    }
+
+    public static String findUserNameById(String id) {
+        for (User user : users) {
+            if (id.equals(user.userID)) {
+                return user.getFullName();
+            }
+        }
+        return "";
+    }
+
+    public static String findUserNameById(Integer id) {
+        for (User user : users) {
+            if (Integer.toString(id).equals(user.userID)) {
+                return user.getFullName();
+            }
+        }
+        return "";
     }
 
     public static void addUser(User user) {
