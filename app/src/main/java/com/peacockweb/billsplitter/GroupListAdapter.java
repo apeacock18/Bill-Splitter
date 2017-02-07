@@ -30,7 +30,7 @@ public class GroupListAdapter extends ArrayAdapter<Group> {
         TextView groupMembers = (TextView) convertView.findViewById(R.id.groupMembers);
         // Populate the data into the template view using the data object
         groupName.setText(group.name);
-        //groupMembers.setText(group.getMemberNames());
+        groupMembers.setText(group.getMemberNames());
         // Return the completed view to render on screen
         return convertView;
     }

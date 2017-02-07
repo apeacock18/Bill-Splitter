@@ -53,11 +53,11 @@ public class ManageGroups extends AppCompatActivity {
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
             VariableManager.selectedGroup = group;
-            List<Integer> members = group.groupMemberIds;
+            List<String> members = group.groupMemberIds;
             ArrayList<String> memberIds = new ArrayList<String>();
-            for (Integer mem : members) {
+            for (String mem : members) {
                 if (!VariableManager.getUserId().equals(mem)) {
-                    memberIds.add(Integer.toString(mem));
+                    memberIds.add(mem);
                 }
             }
             /*ParseObject user = VariableManager.user;

@@ -1,5 +1,7 @@
 package com.peacockweb.billsplitter;
 
+import com.peacockweb.billsplitter.util.VariableManager;
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -7,7 +9,7 @@ import java.util.Set;
  * Created by apeacock on 4/29/16.
  */
 public class Group {
-    ArrayList<Integer> groupMemberIds;
+    ArrayList<String> groupMemberIds;
     ArrayList<Status> statuses;
     ArrayList<Transaction> transactions;
     String name;
@@ -21,7 +23,7 @@ public class Group {
         groupId = "";
     }
 
-    public Group(Set<Integer> members, String name, String groupId,
+    public Group(Set<String> members, String name, String groupId,
                  ArrayList<Status> statuses, ArrayList<Transaction> transactions) {
         this.groupId = groupId;
         groupMemberIds = new ArrayList<>();
@@ -31,7 +33,7 @@ public class Group {
         this.transactions = transactions;
     }
 
-    public Group(ArrayList<Integer> members, String name, String groupId) {
+    public Group(ArrayList<String> members, String name, String groupId) {
         this.groupId = groupId;
         groupMemberIds = members;
         this.name = name;
@@ -48,5 +50,17 @@ public class Group {
         if (!otherGroup.groupId.equals(groupId)) return false;
 
         return true;
+    }
+
+
+    public String getMemberNames() {
+        String str = "";
+        for (int i = 0; i < groupMemberIds.size(); i++) {
+            str += VariableManager.findUserNameById(groupMemberIds.get(i));
+            if (i < groupMemberIds.size() - 1) {
+                str += ", ";
+            }
+        }
+        return str;
     }
 }

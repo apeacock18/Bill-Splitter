@@ -10,14 +10,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.peacockweb.billsplitter.util.NetworkManager;
+import com.peacockweb.billsplitter.util.VariableManager;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 
 public class AddGroupMemberDialog extends DialogFragment {
     String username;
 
     public interface NoticeDialogListener {
-        public void onDialogPositiveClick(String username);
+        public void onDialogPositiveClick(String username, String firstName, String lastName, String id);
     }
 
     // Use this instance of the interface to deliver action events
@@ -55,7 +63,34 @@ public class AddGroupMemberDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
 
                         EditText editText = (EditText) v.findViewById(R.id.username);
-                        final String name = editText.getText().toString().toLowerCase();
+                        final String usernameToFind = editText.getText().toString().toLowerCase();
+
+                        HashMap<String, String> params = new HashMap<>();
+                        params.put("username", usernameToFind);
+
+                        NetworkManager.getUserInfo(usernameToFind, new NetworkManager.NetworkCallBackCallBack() {
+                            @Override
+                            public void response(String response) {
+                                try {
+                                    JSONArray jsonArray = new JSONArray(response);
+                                    JSONObject obj = jsonArray.getJSONObject(0);
+                                    Log.d("GetUserInfo Response", response);
+                                    if (obj.has("Error")) {
+                                        Log.d("Django Error: UserInfo", obj.toString());
+                                    }
+                                    else {
+                                        mListener.onDialogPositiveClick(obj.getString("username"),
+                                                obj.getString("first_name"),
+                                                obj.getString("last_name"),
+                                                obj.getString("id")
+                                        );
+                                    }
+                                }
+                                catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
 
                         /*ParseQuery<ParseObject> query = ParseQuery.getQuery("Users");
                         query.whereEqualTo("username", name);

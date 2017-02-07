@@ -1,5 +1,7 @@
 package com.peacockweb.billsplitter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +23,7 @@ public class GroupFragment extends Fragment {
     public static ArrayList groupsData;
     public static GroupListAdapter groupAdapter;
     private View view;
+    private SharedPreferences prefs;
 
     public GroupFragment() {}
 
@@ -28,6 +31,7 @@ public class GroupFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        prefs = MyApp.mContext.getSharedPreferences(MyApp.SHARED_PREF_KEY, Context.MODE_PRIVATE);
         groupsData = VariableManager.groups;
         System.out.println(groupsData.size() + " groups contained in adapter");
         Log.d("MyApp", " groups contained in adapter");
@@ -55,6 +59,7 @@ public class GroupFragment extends Fragment {
             Group group = (Group) groupsData.get(position);
             currentGroup.setText(group.name);
             VariableManager.selectedGroup = group;
+            prefs.edit().putString("selectedGroupId", group.groupId).apply();
         }
     };
 

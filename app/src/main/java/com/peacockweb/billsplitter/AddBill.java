@@ -41,8 +41,8 @@ public class AddBill extends AppCompatActivity {
     EditText total;
     EditText description;
     Button date;
-    Integer payee;
-    List<Integer> payerIds;
+    String payee;
+    List<String> payerIds;
     List<String> recipients;
     private DatePicker datePicker;
     private Calendar calendar;
@@ -105,8 +105,8 @@ public class AddBill extends AppCompatActivity {
         recipients = new ArrayList<>();
         if (VariableManager.selectedGroup != null) {
             Group currentGroup = VariableManager.selectedGroup;
-            for (Integer mem : currentGroup.groupMemberIds) {
-                recipients.add(VariableManager.findUserNameById(Integer.toString(mem)));
+            for (String mem : currentGroup.groupMemberIds) {
+                recipients.add(VariableManager.findUserNameById(mem));
             }
         }
 
@@ -209,9 +209,9 @@ public class AddBill extends AppCompatActivity {
 
                 HashMap<String, String> split = new HashMap<>();
                 ArrayList<Integer> userIds = new ArrayList<>();
-                for (Integer userId : VariableManager.userIds) {
+                for (String userId : VariableManager.userIds) {
                     Double splitAmount = (100.0 / VariableManager.userIds.size());
-                    split.put(Integer.toString(userId), Double.toString(splitAmount));
+                    split.put(userId, Double.toString(splitAmount));
                 }
 
                 String totalNum = total.getText().toString();
@@ -223,7 +223,7 @@ public class AddBill extends AppCompatActivity {
                 HashMap<String, String> params = new HashMap<>();
                 params.put("token", VariableManager.getToken());
                 params.put("groupId", VariableManager.selectedGroup.groupId);
-                params.put("payee", Integer.toString(payee));
+                params.put("payee", payee);
                 params.put("split", gson.toJson(split));
                 params.put("amount", rawNum);
                 params.put("date", "2016-06-18");
@@ -315,8 +315,8 @@ public class AddBill extends AppCompatActivity {
         }
         PopupMenu menu = new PopupMenu(this, selectPayer);
         // TODO
-        for (Integer payer : payerIds) {
-            menu.getMenu().add(VariableManager.findUserNameById(Integer.toString(payer)));
+        for (String payer : payerIds) {
+            menu.getMenu().add(VariableManager.findUserNameById(payer));
         }
 
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {

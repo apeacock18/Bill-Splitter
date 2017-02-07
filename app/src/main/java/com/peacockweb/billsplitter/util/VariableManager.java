@@ -21,7 +21,7 @@ public class VariableManager {
     public static Group selectedGroup;
     public static ArrayList<Group> groups;
     public static ArrayList<User> users;
-    public static ArrayList<Integer> userIds;
+    public static ArrayList<String> userIds;
 
     public static final String SHARED_PREF_KEY = "shared_pref_key";
 

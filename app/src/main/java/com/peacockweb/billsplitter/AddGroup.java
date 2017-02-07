@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
+import com.peacockweb.billsplitter.util.NetworkManager;
 import com.peacockweb.billsplitter.util.VariableManager;
 import com.tokenautocomplete.TokenCompleteTextView;
 
@@ -27,7 +28,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     FragmentManager manager;
     //TinyDB tinyDB;
     String groupId;
-    ArrayList<String> usernames;
+    ArrayList<String> usernames = new ArrayList<>();
     Toolbar toolbar;
 
     @Override
@@ -42,10 +43,6 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
 
         dialog = new AddGroupMemberDialog();
         manager = getSupportFragmentManager();
-
-        //tinyDB = new TinyDB(this);
-        //people = VariableManager.users;
-
         groupName = (EditText) findViewById(R.id.newGroupName);
 
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, people);
@@ -73,8 +70,15 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     public void onCreateGroupClick(View view) {
         String str = groupName.getText().toString();
         if (str != null && !str.isEmpty()) {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("name", groupName.getText().toString());
+
+            ArrayList<String> ids = new ArrayList<>();
+            for (GroupMember groupMember : addedMembers) {
+                usernames.add(groupMember.getUsername());
+                ids.add(groupMember.getUserId());
+            }
+            NetworkManager.createGroup(str, ids);
+            finish();
+
             /*ParseCloud.callFunctionInBackground("createGroup", params, new FunctionCallback<String>() {
                 public void done(String id, ParseException e) {
                     if (e == null) {
@@ -123,7 +127,7 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
     }
 
     @Override
-    public void onDialogPositiveClick(String username) {
+    public void onDialogPositiveClick(String username, String firstName, String lastName, String id) {
 
         /*arseQuery<ParseObject> query = ParseQuery.getQuery("Users");
         query.whereEqualTo("username", username);
@@ -141,17 +145,19 @@ public class AddGroup extends AppCompatActivity implements AddGroupMemberDialog.
                 }
             }
         });*/
+        GroupMember mem = new GroupMember(firstName, lastName, username, id);
+        completionView.addObject(mem);
     }
 
     public void addMemberClick(View view) {
         dialog.show(manager, "addGroupMember");
     }
 
-    public interface addGroupMemberCalllback {
+    public interface addGroupMemberCallback {
         void groupMemberAddedComplete(Exception e);
     }
 
-    public void addGroupMembers(final List members, final int index, final addGroupMemberCalllback callback) {
+    public void addGroupMembers(final List members, final int index, final addGroupMemberCallback callback) {
         if (index >= members.size()) {
             if (callback != null) {
                 callback.groupMemberAddedComplete(null);

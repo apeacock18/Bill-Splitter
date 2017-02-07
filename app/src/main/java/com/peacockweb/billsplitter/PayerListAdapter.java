@@ -17,9 +17,9 @@ import java.util.List;
  */
 class PayerListAdapter extends ArrayAdapter {
     private final Context context;
-    private final List<Integer> values;
+    private final List<String> values;
 
-    public PayerListAdapter(Context context, List<Integer> values) {
+    public PayerListAdapter(Context context, List<String> values) {
         super(context, -1, values);
         this.context = context;
         this.values = values;
@@ -34,7 +34,7 @@ class PayerListAdapter extends ArrayAdapter {
         TextView payerName = (TextView) rowView.findViewById(R.id.payerNameText);
         TextView splitPercent = (TextView) rowView.findViewById(R.id.payerSplitPercentText);
 
-        payerName.setText(VariableManager.findUserNameById(Integer.toString(values.get(position))));
+        payerName.setText(VariableManager.findUserNameById(values.get(position)));
         double split = 100/values.size();
         DecimalFormat df = new DecimalFormat("#.##");
         String str = String.valueOf(df.format(split));

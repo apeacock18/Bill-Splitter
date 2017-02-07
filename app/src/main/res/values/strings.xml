@@ -17,4 +17,5 @@
     <string name="title_activity_parse_server_test">ParseServerTest</string>
     <string name="title_activity_popup_list_window">PopupListWindow</string>
     <string name="title_activity_manage_friends">ManageFriends</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
